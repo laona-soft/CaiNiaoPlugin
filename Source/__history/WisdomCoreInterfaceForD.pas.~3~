@@ -44,180 +44,180 @@ type
   IServiceInfo = interface(IInterface)
     [SERVICE_INFO_ID]
     procedure AddExtendPointImpService(const service: IServiceInfo);
-    function GetAuthor: string;
+    function GetAuthor: MyString;
     function GetBelongToPlugin: IPluginInfo;
-    function GetComment: string;
+    function GetComment: MyString;
     function GetCreateObjectFunc: TCreateObjectFunc;
     function GetExtendPointImpService(idx: Integer): IServiceInfo;
     function GetExtendPointImpServiceCount: Integer;
-    function GetImplementServiceID: string;
+    function GetImplementServiceID: MyString;
     function GetSelfObject: TObject;
     function GetServiceClass: TPluginClass;
-    function GetServiceID: string;
+    function GetServiceID: MyString;
     function GetServiceIntf: IInterface;
-    function GetServiceName: string;
-    function GetVersion: string;
+    function GetServiceName: MyString;
+    function GetVersion: MyString;
     function IsActive: Boolean;
     function IsExtendPoint: Boolean;
     function IsSingleton: Boolean;
-    procedure RemoveExtendPointImpService(const sid: string);
+    procedure RemoveExtendPointImpService(const sid: MyString);
     procedure SetActive(act: Boolean);
-    procedure SetAuthor(const author: string);
+    procedure SetAuthor(const author: MyString);
     procedure SetBelongToPlugin(const ipf: IPluginInfo);
-    procedure SetComment(const comment: string);
+    procedure SetComment(const comment: MyString);
     procedure SetCreateObjectFunc(const func: TCreateObjectFunc);
-    procedure SetImplementServiceID(const impID: string);
+    procedure SetImplementServiceID(const impID: MyString);
     procedure SetIsExtendPoint(isExtPoint: Boolean);
     procedure SetReadOnly;
     procedure SetServiceClass(const intClass: TPluginClass);
-    procedure SetServiceID(const id: string);
+    procedure SetServiceID(const id: MyString);
     procedure SetServiceIntf(const sv: IInterface);
-    procedure SetServiceName(const sName: string);
+    procedure SetServiceName(const sName: MyString);
     procedure SetSingleton(isSingleton: Boolean);
-    procedure SetVersion(const ver: string);
+    procedure SetVersion(const ver: MyString);
   end;
 
 
   IPluginInfo = interface(IInterface)
     [PLUGIN_INFO_ID]
-    function AppendServiceInfo(const sid: string): IServiceInfo;
-    function GetAuthor: string;
-    function GetComment: string;
-    function GetDllName: string;
-    function GetPluginID: string;
+    function AppendServiceInfo(const sid: MyString): IServiceInfo;
+    function GetAuthor: MyString;
+    function GetComment: MyString;
+    function GetDllName: MyString;
+    function GetPluginID: MyString;
     function GetPluginLoader: IPluginLoader;
-    function GetPluginName: string;
+    function GetPluginName: MyString;
     function GetSelfObject: TObject;
     function GetServiceCount: Integer;
     function GetServiceInfo(idx: Integer): IServiceInfo;
-    function GetUpdateHistory: string;
-    function GetVersion: string;
+    function GetUpdateHistory: MyString;
+    function GetVersion: MyString;
     function IsActive: Boolean;
     function IsLoadedThroughConfig: Boolean;
     procedure SetActive(act: Boolean);
-    procedure SetAuthor(const author: string);
-    procedure SetComment(const comment: string);
+    procedure SetAuthor(const author: MyString);
+    procedure SetComment(const comment: MyString);
     procedure SetIsLoadedThroughConfig(ltFormCfg: Boolean);
-    procedure SetPluginID(const id: string);
+    procedure SetPluginID(const id: MyString);
     procedure SetPluginLoader(const loader: IPluginLoader);
-    procedure SetPluginName(const theName: string);
+    procedure SetPluginName(const theName: MyString);
     procedure SetReadOnly;
-    procedure SetUpdateHistory(const memo: string);
-    procedure SetVersion(const ver: string);
+    procedure SetUpdateHistory(const memo: MyString);
+    procedure SetVersion(const ver: MyString);
   end;
 
   IServiceManager = interface(IInterface)
     ['{3EC087DE-1A1A-418F-A058-A28969F7FEA5}']
-    function AddServiceQuick(const serviceID, impServiceID: string; const func:
+    function AddServiceQuick(const serviceID, impServiceID: MyString; const func:
         TCreateObjectFunc; active: Boolean = True; isSingleton: Boolean = False;
         isExtendPoint: Boolean = False): Boolean; overload;
-    function AddServiceQuick(const serviceID, impServiceID: string; const
+    function AddServiceQuick(const serviceID, impServiceID: MyString; const
         serviceClass: TPluginClass=nil; active: Boolean=True; isSingleton:
         Boolean=False; isExtendPoint: Boolean=False): Boolean; overload;
     function Count: Integer;
-    function ExistService(const serviceID: string): Boolean;
-    function GetExtService(const serviceID: string; idx: Integer): IInterface;
-    function GetExtServiceCount(const serviceID: string): Integer;
-    function GetExtServiceInfo(const serviceID: string; idx: Integer): IServiceInfo;
+    function ExistService(const serviceID: MyString): Boolean;
+    function GetExtService(const serviceID: MyString; idx: Integer): IInterface;
+    function GetExtServiceCount(const serviceID: MyString): Integer;
+    function GetExtServiceInfo(const serviceID: MyString; idx: Integer): IServiceInfo;
     function GetSelfObject: TObject;
-    function GetService(const serviceID: string): IInterface;
-    function GetServiceInfo(const serviceID: string): IServiceInfo; overload;
+    function GetService(const serviceID: MyString): IInterface;
+    function GetServiceInfo(const serviceID: MyString): IServiceInfo; overload;
     function GetServiceInfo(idx: Integer): IServiceInfo; overload;
     function RegService(const sv: IServiceInfo): Integer;
-    function ServiceIsActive(const serviceID: string): Boolean;
-    function StartService(const serviceID: string): Boolean;
-    function StopService(const serviceID: string): Boolean;
-    function UnRegService(const serviceID: string): Integer;
+    function ServiceIsActive(const serviceID: MyString): Boolean;
+    function StartService(const serviceID: MyString): Boolean;
+    function StopService(const serviceID: MyString): Boolean;
+    function UnRegService(const serviceID: MyString): Integer;
   end;
 
   IPluginLoader = interface(IInterface)
     [PLUGIN_LOADER]
-    function DLLGetObject(const serviceID: string): IInterface;
+    function DLLGetObject(const serviceID: MyString): IInterface;
     function DLLGetPluginInfo(const im: IPluginInfo): Integer;
     procedure DLLInitializePlugin(const IServiceMgr: IServiceManager);
-    procedure DLLServiceStart(const serviceID: string);
-    procedure DLLServiceStop(const serviceID: string);
+    procedure DLLServiceStart(const serviceID: MyString);
+    procedure DLLServiceStop(const serviceID: MyString);
     procedure DLLUninitializePlugin(const IServiceMgr: IServiceManager);
-    function GetLoadedPluginFile: string;
+    function GetLoadedPluginFile: MyString;
     function GetSelfObject: TObject;
-    function LoadPlugin(const pluginFile: string): Integer;
+    function LoadPlugin(const pluginFile: MyString): Integer;
     function UnLoadPlugin: Integer;
   end;
 
   IPluginManager = interface(IInterface)
     [PLUGIN_MANAGER_ID]
-    function CfgLoadPluginByPluginID(const pluginID: string): Integer;
-    function CfgLoadPluginByServiceID(const serviceID: string): Integer;
+    function CfgLoadPluginByPluginID(const pluginID: MyString): Integer;
+    function CfgLoadPluginByServiceID(const serviceID: MyString): Integer;
     function CfgReLoadPlugins: Integer;
     function GetPluginInfoByIndex(idx: Integer): IPluginInfo;
-    function GetPluginInfoByPluginID(const pluginID: string): IPluginInfo;
+    function GetPluginInfoByPluginID(const pluginID: MyString): IPluginInfo;
     function GetPluginsCount: Integer;
     function GetSelfObject: TObject;
-    function LoadPluginDirect(const pluginFile: string; const useLoader:
-        string=''): Integer;
+    function LoadPluginDirect(const pluginFile: MyString; const useLoader:
+        MyString=''): Integer;
     function SetPluginActiveByIndex(idx: Integer): Integer;
-    function SetPluginActiveByPluginID(const pluginID: string): Integer;
+    function SetPluginActiveByPluginID(const pluginID: MyString): Integer;
     function SetPluginDeActiveByIndex(idx: Integer): Integer;
-    function SetPluginDeActiveByPluginID(const pluginID: string): Integer;
+    function SetPluginDeActiveByPluginID(const pluginID: MyString): Integer;
     function UnLoadPluginByIndex(idx: Integer): Integer;
-    function UnLoadPluginByPluginID(const pluginID: string): Integer;
-    function UpdatePluginDirect(const pluginFile: string; const useLoader:
-        string=''): Integer;
+    function UnLoadPluginByPluginID(const pluginID: MyString): Integer;
+    function UpdatePluginDirect(const pluginFile: MyString; const useLoader:
+        MyString=''): Integer;
   end;
 
   INotifyClient = interface(IInterface)
     ['{5A580F9A-8657-497A-8629-AC1CC49C5CF4}']
-    procedure Update(const sender: Pointer; flag: Integer; const msg: string;
+    procedure Update(const sender: Pointer; flag: Integer; const msg: MyString;
         const data: Pointer);
   end;
 
   IConfig = interface(IInterface)
     [CONFIG_ID]
     procedure AddExtendPoint(const sv: IServiceInfo);
-    procedure AddPlugin(const dllFile: string);
+    procedure AddPlugin(const dllFile: MyString);
     procedure AddService(const sv: IServiceInfo);
-    procedure DisableExtendPoint(const sid: string);
-    procedure DisablePlugin(const pid: string);
-    procedure DisableService(const serviceID: string);
-    procedure EnabledExtendPoint(const sid: string);
-    procedure EnabledPlugin(const pid: string);
-    procedure EnabledService(const serviceID: string);
-    function ExistExtPoint(const sid: string): Boolean;
-    function ExistPlugin(const pid: string): Boolean;
-    function ExistService(const sid: string): Boolean;
-    function ExtPointIsDisable(const sid: string): Boolean;
-    function GetExtImpServiceCount(const extSid: string): Integer;
-    function GetExtImpServiceID(const extSid: string; idx: Integer): string;
+    procedure DisableExtendPoint(const sid: MyString);
+    procedure DisablePlugin(const pid: MyString);
+    procedure DisableService(const serviceID: MyString);
+    procedure EnabledExtendPoint(const sid: MyString);
+    procedure EnabledPlugin(const pid: MyString);
+    procedure EnabledService(const serviceID: MyString);
+    function ExistExtPoint(const sid: MyString): Boolean;
+    function ExistPlugin(const pid: MyString): Boolean;
+    function ExistService(const sid: MyString): Boolean;
+    function ExtPointIsDisable(const sid: MyString): Boolean;
+    function GetExtImpServiceCount(const extSid: MyString): Integer;
+    function GetExtImpServiceID(const extSid: MyString; idx: Integer): MyString;
     function GetPluginCount: Integer;
-    function GetPluginLoaderID(const pid: string): string;
-    function GetPluginLoadState(const pid: string): string;
-    procedure Open(const xmlFile: string);
-    function PluginDLL(const pid: string): string;
-    function PluginIDFromExtSid(const extSID: string): string;
-    function PluginIDFromIdx(idx: Integer): string;
-    function PluginIDFromSid(const sid: string): string;
-    function PluginIsDisable(const pid: string): Boolean;
+    function GetPluginLoaderID(const pid: MyString): MyString;
+    function GetPluginLoadState(const pid: MyString): MyString;
+    procedure Open(const xmlFile: MyString);
+    function PluginDLL(const pid: MyString): MyString;
+    function PluginIDFromExtSid(const extSID: MyString): MyString;
+    function PluginIDFromIdx(idx: Integer): MyString;
+    function PluginIDFromSid(const sid: MyString): MyString;
+    function PluginIsDisable(const pid: MyString): Boolean;
     procedure Reload;
-    procedure RemoveExtendPoint(const sid: string);
-    procedure RemovePlugin(const pid: string);
-    procedure RemoveService(const serviceID: string);
+    procedure RemoveExtendPoint(const sid: MyString);
+    procedure RemovePlugin(const pid: MyString);
+    procedure RemoveService(const serviceID: MyString);
     procedure Save;
-    function ServiceIsDisable(const sid: string): Boolean;
-    function ServiceIsSingleton(const sid: string): Boolean;
-    procedure SetExtendPointSingleton(const sid: string; setSingleton: Boolean);
-    procedure SetPluginLoaderID(const pid, lid: string);
-    procedure SetPluginLoadState(const pid, state: string);
-    procedure SetServiceSingleton(const serviceID: string; setSingleton:
+    function ServiceIsDisable(const sid: MyString): Boolean;
+    function ServiceIsSingleton(const sid: MyString): Boolean;
+    procedure SetExtendPointSingleton(const sid: MyString; setSingleton: Boolean);
+    procedure SetPluginLoaderID(const pid, lid: MyString);
+    procedure SetPluginLoadState(const pid, state: MyString);
+    procedure SetServiceSingleton(const serviceID: MyString; setSingleton:
         Boolean);
   end;
 
   ICommunicateManager = interface(IInterface)
     ['{DEF67732-DCB6-463F-AB49-CFC3E02EF57F}']
-    procedure Broadcast(const sender: Pointer; flag: Integer; const msg: string;
+    procedure Broadcast(const sender: Pointer; flag: Integer; const msg: MyString;
         const data: Pointer);
-    procedure Notify(const sender: Pointer; flag: Integer; const msg: string;
+    procedure Notify(const sender: Pointer; flag: Integer; const msg: MyString;
         const data: Pointer);
-    procedure RegNotifyClient(const serviceID: string; const client:
+    procedure RegNotifyClient(const serviceID: MyString; const client:
         INotifyClient);
   end;
 
@@ -251,7 +251,11 @@ end;
 
 function TPluginInterfacedObject._Release: Integer;
 begin
+  {$IFDEF IDE_XE4up}
   Result := TInterlocked.Decrement(FRefCount);
+  {$ELSE}
+  Result := InterlockedDecrement(FRefCount);
+  {$ENDIF}
   if not FObjFree then //如果由对象来释放，引用计数器到0时不调用Destroy
     if Result = 0 then
       Destroy;

@@ -1,48 +1,10 @@
-{*******************************************************}
-{                                                       }
-{       WisdomPluginFramework                           }
-{       2014 IceAir                                     }
-{       ice.air@126.com  QQ: 3216343                    }
-{                                                       }
-{*******************************************************}
-
-//////////////////////////////////////////////////////////////////
-//                        使用说明                              //
-//   你可以自由复制、分发、使用、扩展本框架代码，但各单元中需   //
-//   保留作者大名，如果你有好的修改，请反馈作者，以便作者整合   //
-//   后为大家提供更尽善尽美的开发框架。                         //
-//                                                              //
-//   本框架命名Wisdom，实期望能合集众人之能量，闪耀智慧之光芒   //
-//                                                              //
-//////////////////////////////////////////////////////////////////
-
-{--------------------------------------------------------
-                           框架用途
-      WisdomPluginFramework是融合OSGI微内核理念 + Eclipse的
-  扩展点概念而精心设计的轻量级插件框架，由Delphi实现，但可以
-  使用于Delphi、BCB、VC++中，提供非常强大灵活的插件调度能力，
-  让你充分享受插件式编程的乐趣。
- --------------------------------------------------------}
-
 unit WisdomFramework;
-
-{$INCLUDE Def.inc}
 
 interface
 
 uses
-  {$IFDEF IDE_XE4up}
   Winapi.Windows, System.SysUtils, System.Classes, System.StrUtils, System.IniFiles,
-  {$ELSE}
-  Windows, SysUtils, Classes, StrUtils, IniFiles,
-  {$ENDIF}
-  ResultCode, XmlConfig,
-  {$IFDEF _USE_FOR_CPP}
-  WisdomCoreInterfaceForC,
-  {$ENDIF}
-  WisdomCoreInterfaceForD;
-
-{$INCLUDE MyString.inc}
+  ResultCode, XmlConfig, WisdomCoreInterfaceForD;
 
 type
   TWisdomFramework = class(TObject)
@@ -53,121 +15,118 @@ type
     class procedure Stop;
   end;
 
-  {$IFDEF _USE_FOR_CPP}
-    {$INCLUDE ClassDefineForC.inc}
-  {$ELSE}
   TServiceInfo = class(TPluginInterfacedObject, IServiceInfo)
   protected
-    FAuthor: MyString;
+    FAuthor: string;
     FBelongToPlugin: ^IPluginInfo;
-    FComment: MyString;
+    FComment: string;
     FCreateObjFunc: TCreateObjectFunc;
     FExtServiceList: THashedStringList;
-    FImpServiceID: MyString;
+    FImpServiceID: string;
     FIsActive: Boolean;
     FIsExtendPoint: Boolean;
     FIsSingleton: Boolean;
     FReadOnly: Boolean;
     FServiceClass: TPluginClass;
     FServiceIntf: IInterface;
-    FServiceName: MyString;
-    Fsid: MyString;
-    FVersion: MyString;
+    FServiceName: string;
+    Fsid: string;
+    FVersion: string;
   public
     constructor Create; override;
     destructor Destroy; override;
     procedure AddExtendPointImpService(const service: IServiceInfo); virtual;
-    function GetAuthor: MyString; virtual;
+    function GetAuthor: string; virtual;
     function GetBelongToPlugin: IPluginInfo; virtual;
-    function GetComment: MyString; virtual;
+    function GetComment: string; virtual;
     function GetCreateObjectFunc: TCreateObjectFunc; virtual;
     function GetExtendPointImpService(idx: Integer): IServiceInfo; virtual;
     function GetExtendPointImpServiceCount: Integer; virtual;
-    function GetImplementServiceID: MyString; virtual;
+    function GetImplementServiceID: string; virtual;
     function GetSelfObject: TObject; virtual;
     function GetServiceClass: TPluginClass; virtual;
-    function GetServiceID: MyString; virtual;
+    function GetServiceID: string; virtual;
     function GetServiceIntf: IInterface; virtual;
-    function GetServiceName: MyString; virtual;
-    function GetVersion: MyString; virtual;
+    function GetServiceName: string; virtual;
+    function GetVersion: string; virtual;
     function IsActive: Boolean; virtual;
     function IsExtendPoint: Boolean; virtual;
     function IsSingleton: Boolean; virtual;
-    procedure RemoveExtendPointImpService(const sid: MyString); virtual;
+    procedure RemoveExtendPointImpService(const sid: string); virtual;
     procedure SetActive(act: Boolean); virtual;
-    procedure SetAuthor(const author: MyString); virtual;
+    procedure SetAuthor(const author: string); virtual;
     procedure SetBelongToPlugin(const ipf: IPluginInfo); virtual;
-    procedure SetComment(const comment: MyString); virtual;
+    procedure SetComment(const comment: string); virtual;
     procedure SetCreateObjectFunc(const func: TCreateObjectFunc); virtual;
-    procedure SetImplementServiceID(const impID: MyString); virtual;
+    procedure SetImplementServiceID(const impID: string); virtual;
     procedure SetIsExtendPoint(isExtPoint: Boolean); virtual;
     procedure SetReadOnly; virtual;
     procedure SetServiceClass(const intClass: TPluginClass); virtual;
-    procedure SetServiceID(const id: MyString); virtual;
+    procedure SetServiceID(const id: string); virtual;
     procedure SetServiceIntf(const sv: IInterface); virtual;
-    procedure SetServiceName(const sName: MyString); virtual;
+    procedure SetServiceName(const sName: string); virtual;
     procedure SetSingleton(isSingleton: Boolean); virtual;
-    procedure SetVersion(const ver: MyString); virtual;
+    procedure SetVersion(const ver: string); virtual;
   end;
 
   TPluginInfo = class(TPluginInterfacedObject, IPluginInfo)
   protected
     FActived: Boolean;
-    FAuthor: MyString;
-    FComment: MyString;
+    FAuthor: string;
+    FComment: string;
     FLoadedThroughConfig: Boolean;
-    FPluginID: MyString;
+    FPluginID: string;
     FPluginLoader: IPluginLoader;
-    FPluginName: MyString;
+    FPluginName: string;
     FReadOnly: Boolean;
     FServiceList: THashedStringList;
-    FUpdateHistory: MyString;
-    FVersion: MyString;
+    FUpdateHistory: string;
+    FVersion: string;
   public
     constructor Create; override;
     destructor Destroy; override;
-    function AppendServiceInfo(const sid: MyString): IServiceInfo; virtual;
-    function GetAuthor: MyString; virtual;
-    function GetComment: MyString; virtual;
-    function GetDllName: MyString; virtual;
-    function GetPluginID: MyString; virtual;
+    function AppendServiceInfo(const sid: string): IServiceInfo; virtual;
+    function GetAuthor: string; virtual;
+    function GetComment: string; virtual;
+    function GetDllName: string; virtual;
+    function GetPluginID: string; virtual;
     function GetPluginLoader: IPluginLoader; virtual;
-    function GetPluginName: MyString; virtual;
+    function GetPluginName: string; virtual;
     function GetSelfObject: TObject; virtual;
     function GetServiceCount: Integer; virtual;
     function GetServiceInfo(idx: Integer): IServiceInfo; virtual;
-    function GetUpdateHistory: MyString; virtual;
-    function GetVersion: MyString; virtual;
+    function GetUpdateHistory: string; virtual;
+    function GetVersion: string; virtual;
     function IsActive: Boolean; virtual;
     function IsLoadedThroughConfig: Boolean; virtual;
     procedure SetActive(act: Boolean); virtual;
-    procedure SetAuthor(const author: MyString); virtual;
-    procedure SetComment(const comment: MyString); virtual;
+    procedure SetAuthor(const author: string); virtual;
+    procedure SetComment(const comment: string); virtual;
     procedure SetIsLoadedThroughConfig(ltFormCfg: Boolean); virtual;
-    procedure SetPluginID(const id: MyString); virtual;
+    procedure SetPluginID(const id: string); virtual;
     procedure SetPluginLoader(const loader: IPluginLoader); virtual;
-    procedure SetPluginName(const theName: MyString); virtual;
+    procedure SetPluginName(const theName: string); virtual;
     procedure SetReadOnly; virtual;
-    procedure SetUpdateHistory(const memo: MyString); virtual;
-    procedure SetVersion(const ver: MyString); virtual;
+    procedure SetUpdateHistory(const memo: string); virtual;
+    procedure SetVersion(const ver: string); virtual;
   end;
 
   TPluginLoader = class(TPluginInterfacedObject, IPluginLoader)
   protected
-    FDLLFile: MyString;
+    FDLLFile: string;
     FDllHandle: THandle;
   public
     constructor Create; override;
     destructor Destroy; override;
-    function DLLGetObject(const serviceID: MyString): IInterface; virtual;
+    function DLLGetObject(const serviceID: string): IInterface; virtual;
     function DLLGetPluginInfo(const im: IPluginInfo): Integer; virtual;
     procedure DLLInitializePlugin(const IServiceMgr: IServiceManager); virtual;
-    procedure DLLServiceStart(const serviceID: MyString); virtual;
-    procedure DLLServiceStop(const serviceID: MyString); virtual;
+    procedure DLLServiceStart(const serviceID: string); virtual;
+    procedure DLLServiceStop(const serviceID: string); virtual;
     procedure DLLUninitializePlugin(const IServiceMgr: IServiceManager); virtual;
-    function GetLoadedPluginFile: MyString; virtual;
+    function GetLoadedPluginFile: string; virtual;
     function GetSelfObject: TObject; virtual;
-    function LoadPlugin(const pluginFile: MyString): Integer; virtual;
+    function LoadPlugin(const pluginFile: string): Integer; virtual;
     function UnLoadPlugin: Integer; virtual;
   end;
 
@@ -177,66 +136,60 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
-    function CfgLoadPluginByPluginID(const pluginID: MyString): Integer; virtual;
-    function CfgLoadPluginByServiceID(const serviceID: MyString): Integer; virtual;
+    function CfgLoadPluginByPluginID(const pluginID: string): Integer; virtual;
+    function CfgLoadPluginByServiceID(const serviceID: string): Integer; virtual;
     function CfgReLoadPlugins: Integer; virtual;
     function GetPluginInfoByIndex(idx: Integer): IPluginInfo; virtual;
-    function GetPluginInfoByPluginID(const pluginID: MyString): IPluginInfo; virtual;
+    function GetPluginInfoByPluginID(const pluginID: string): IPluginInfo; virtual;
     function GetPluginsCount: Integer; virtual;
     function GetSelfObject: TObject; virtual;
-    function LoadPluginDirect(const pluginFile: MyString; const useLoader:
-        MyString=''): Integer; virtual;
+    function LoadPluginDirect(const pluginFile: string; const useLoader:
+        string=''): Integer; virtual;
     function SetPluginActiveByIndex(idx: Integer): Integer; virtual;
-    function SetPluginActiveByPluginID(const pluginID: MyString): Integer; virtual;
+    function SetPluginActiveByPluginID(const pluginID: string): Integer; virtual;
     function SetPluginDeActiveByIndex(idx: Integer): Integer; virtual;
-    function SetPluginDeActiveByPluginID(const pluginID: MyString): Integer; virtual;
+    function SetPluginDeActiveByPluginID(const pluginID: string): Integer; virtual;
     function UnLoadPluginByIndex(idx: Integer): Integer; virtual;
-    function UnLoadPluginByPluginID(const pluginID: MyString): Integer; virtual;
-    function UpdatePluginDirect(const pluginFile: MyString; const useLoader:
-        MyString=''): Integer; virtual;
+    function UnLoadPluginByPluginID(const pluginID: string): Integer; virtual;
+    function UpdatePluginDirect(const pluginFile: string; const useLoader:
+        string=''): Integer; virtual;
   end;
 
   TServiceManager = class(TPluginInterfacedObject, IServiceManager)
   protected
     FServiceList: THashedStringList;
-    function GetServiceIdx(const serviceID: MyString): Integer;
+    function GetServiceIdx(const serviceID: string): Integer;
     function RegExtService(const sv: IServiceInfo): Integer;
   public
     constructor Create; override;
     destructor Destroy; override;
-    function AddServiceQuick(const serviceID, impServiceID: MyString; const func:
+    function AddServiceQuick(const serviceID, impServiceID: string; const func:
         TCreateObjectFunc; active: Boolean = True; isSingleton: Boolean = False;
         isExtendPoint: Boolean = False): Boolean; overload; virtual;
-    function AddServiceQuick(const serviceID, impServiceID: MyString; const
+    function AddServiceQuick(const serviceID, impServiceID: string; const
         serviceClass: TPluginClass=nil; active: Boolean=True; isSingleton:
         Boolean=False; isExtendPoint: Boolean=False): Boolean; overload; virtual;
     function Count: Integer; virtual;
-    function ExistService(const serviceID: MyString): Boolean; virtual;
-    function GetExtService(const serviceID: MyString; idx: Integer): IInterface; virtual;
-    function GetExtServiceCount(const serviceID: MyString): Integer; virtual;
-    function GetExtServiceInfo(const serviceID: MyString; idx: Integer): IServiceInfo; virtual;
+    function ExistService(const serviceID: string): Boolean; virtual;
+    function GetExtService(const serviceID: string; idx: Integer): IInterface; virtual;
+    function GetExtServiceCount(const serviceID: string): Integer; virtual;
+    function GetExtServiceInfo(const serviceID: string; idx: Integer): IServiceInfo; virtual;
     function GetSelfObject: TObject; virtual;
-    function GetService(const serviceID: MyString): IInterface; virtual;
-    function GetServiceInfo(const serviceID: MyString): IServiceInfo; overload; virtual;
+    function GetService(const serviceID: string): IInterface; virtual;
+    function GetServiceInfo(const serviceID: string): IServiceInfo; overload; virtual;
     function GetServiceInfo(idx: Integer): IServiceInfo; overload; virtual;
     function RegService(const sv: IServiceInfo): Integer; virtual;
-    function ServiceIsActive(const serviceID: MyString): Boolean; virtual;
-    function StartService(const serviceID: MyString): Boolean; virtual;
-    function StopService(const serviceID: MyString): Boolean; virtual;
-    function UnRegService(const serviceID: MyString): Integer; virtual;
+    function ServiceIsActive(const serviceID: string): Boolean; virtual;
+    function StartService(const serviceID: string): Boolean; virtual;
+    function StopService(const serviceID: string): Boolean; virtual;
+    function UnRegService(const serviceID: string): Integer; virtual;
   end;
-
-  {$ENDIF}
 
   function GetObjFromIntf(AClass: TClass; const Intf: IInterface): TObject;
 var
   GServiceManagerObj: TServiceManager = nil;
 
 implementation
-
-{$IFDEF _USE_FOR_CPP}
-  {$INCLUDE ClassImplementForC.inc}
-{$ENDIF}
 
 function GetObjFromIntf(AClass: TClass; const Intf: IInterface): TObject;
 var
@@ -267,11 +220,6 @@ begin
   end;
 end;
 
-{ TServiceInfo }
-
-{
-********************************* TServiceInfo *********************************
-}
 constructor TServiceInfo.Create;
 begin
   inherited;
@@ -323,7 +271,7 @@ begin
   end;
 end;
 
-function TServiceInfo.GetAuthor: MyString;
+function TServiceInfo.GetAuthor: string;
 begin
   Result := FAuthor;
 end;
@@ -333,7 +281,7 @@ begin
   Result := IPluginInfo(FBelongToPlugin);
 end;
 
-function TServiceInfo.GetComment: MyString;
+function TServiceInfo.GetComment: string;
 begin
   Result := FComment;
 end;
@@ -356,7 +304,7 @@ begin
   Result := FExtServiceList.Count;
 end;
 
-function TServiceInfo.GetImplementServiceID: MyString;
+function TServiceInfo.GetImplementServiceID: string;
 begin
   Result := FImpServiceID;
 end;
@@ -371,7 +319,7 @@ begin
   Result := FServiceClass;
 end;
 
-function TServiceInfo.GetServiceID: MyString;
+function TServiceInfo.GetServiceID: string;
 begin
   Result := Fsid;
 end;
@@ -381,12 +329,12 @@ begin
   Result := FServiceIntf;
 end;
 
-function TServiceInfo.GetServiceName: MyString;
+function TServiceInfo.GetServiceName: string;
 begin
   Result := FServiceName
 end;
 
-function TServiceInfo.GetVersion: MyString;
+function TServiceInfo.GetVersion: string;
 begin
   Result := FVersion;
 end;
@@ -406,7 +354,7 @@ begin
   Result := FIsSingleton;
 end;
 
-procedure TServiceInfo.RemoveExtendPointImpService(const sid: MyString);
+procedure TServiceInfo.RemoveExtendPointImpService(const sid: string);
 var
   idx: Integer;
 begin
@@ -423,7 +371,7 @@ begin
   FIsActive := act;
 end;
 
-procedure TServiceInfo.SetAuthor(const author: MyString);
+procedure TServiceInfo.SetAuthor(const author: string);
 begin
   if not FReadOnly then
     FAuthor := author;
@@ -435,7 +383,7 @@ begin
     FBelongToPlugin := Pointer(ipf);
 end;
 
-procedure TServiceInfo.SetComment(const comment: MyString);
+procedure TServiceInfo.SetComment(const comment: string);
 begin
   if not FReadOnly then
     FComment := comment;
@@ -446,7 +394,7 @@ begin
   FCreateObjFunc := func;
 end;
 
-procedure TServiceInfo.SetImplementServiceID(const impID: MyString);
+procedure TServiceInfo.SetImplementServiceID(const impID: string);
 begin
   if not FReadOnly then
     FImpServiceID := impID;
@@ -469,7 +417,7 @@ begin
     FServiceClass := intClass;
 end;
 
-procedure TServiceInfo.SetServiceID(const id: MyString);
+procedure TServiceInfo.SetServiceID(const id: string);
 begin
   if not FReadOnly then
     Fsid := id;
@@ -480,7 +428,7 @@ begin
   FServiceIntf := sv;
 end;
 
-procedure TServiceInfo.SetServiceName(const sName: MyString);
+procedure TServiceInfo.SetServiceName(const sName: string);
 begin
   if not FReadOnly then
     FServiceName := sName;
@@ -492,7 +440,7 @@ begin
     FIsSingleton := isSingleton;
 end;
 
-procedure TServiceInfo.SetVersion(const ver: MyString);
+procedure TServiceInfo.SetVersion(const ver: string);
 begin
   if not FReadOnly then
     FVersion := ver;
@@ -540,7 +488,7 @@ begin
   inherited;
 end;
 
-function TPluginInfo.AppendServiceInfo(const sid: MyString): IServiceInfo;
+function TPluginInfo.AppendServiceInfo(const sid: string): IServiceInfo;
 var
   i: Integer;
 begin
@@ -561,22 +509,22 @@ begin
   FServiceList.AddObject(sid, Pointer(Result));
 end;
 
-function TPluginInfo.GetAuthor: MyString;
+function TPluginInfo.GetAuthor: string;
 begin
   Result := FAuthor;
 end;
 
-function TPluginInfo.GetComment: MyString;
+function TPluginInfo.GetComment: string;
 begin
   Result := FComment;
 end;
 
-function TPluginInfo.GetDllName: MyString;
+function TPluginInfo.GetDllName: string;
 begin
   Result := FPluginLoader.GetLoadedPluginFile;
 end;
 
-function TPluginInfo.GetPluginID: MyString;
+function TPluginInfo.GetPluginID: string;
 begin
   Result := FPluginID;
 end;
@@ -586,7 +534,7 @@ begin
   Result := FPluginLoader;
 end;
 
-function TPluginInfo.GetPluginName: MyString;
+function TPluginInfo.GetPluginName: string;
 begin
   Result := FPluginName;
 end;
@@ -609,12 +557,12 @@ begin
     Result := nil;
 end;
 
-function TPluginInfo.GetUpdateHistory: MyString;
+function TPluginInfo.GetUpdateHistory: string;
 begin
   Result := FUpdateHistory;
 end;
 
-function TPluginInfo.GetVersion: MyString;
+function TPluginInfo.GetVersion: string;
 begin
   Result := FVersion;
 end;
@@ -634,13 +582,13 @@ begin
   FActived := act;
 end;
 
-procedure TPluginInfo.SetAuthor(const author: MyString);
+procedure TPluginInfo.SetAuthor(const author: string);
 begin
   if not FReadOnly then
     FAuthor := author;
 end;
 
-procedure TPluginInfo.SetComment(const comment: MyString);
+procedure TPluginInfo.SetComment(const comment: string);
 begin
   if not FReadOnly then
     FComment := comment;
@@ -651,7 +599,7 @@ begin
   FLoadedThroughConfig := ltFormCfg;
 end;
 
-procedure TPluginInfo.SetPluginID(const id: MyString);
+procedure TPluginInfo.SetPluginID(const id: string);
 begin
   if not FReadOnly then
     FPluginID := id;
@@ -663,7 +611,7 @@ begin
   FPluginLoader := loader;
 end;
 
-procedure TPluginInfo.SetPluginName(const theName: MyString);
+procedure TPluginInfo.SetPluginName(const theName: string);
 begin
   if not FReadOnly then
     FPluginName := theName;
@@ -674,13 +622,13 @@ begin
   FReadOnly := True;
 end;
 
-procedure TPluginInfo.SetUpdateHistory(const memo: MyString);
+procedure TPluginInfo.SetUpdateHistory(const memo: string);
 begin
   if not FReadOnly then
     FUpdateHistory := memo;
 end;
 
-procedure TPluginInfo.SetVersion(const ver: MyString);
+procedure TPluginInfo.SetVersion(const ver: string);
 begin
   if not FReadOnly then
     FVersion := ver;
@@ -787,7 +735,7 @@ begin
   inherited;
 end;
 
-function TServiceManager.AddServiceQuick(const serviceID, impServiceID: MyString;
+function TServiceManager.AddServiceQuick(const serviceID, impServiceID: string;
     const func: TCreateObjectFunc; active: Boolean = True; isSingleton: Boolean
     = False; isExtendPoint: Boolean = False): Boolean;
 var
@@ -803,7 +751,7 @@ begin
   Result := RegService(sv) = ERROR_SUCCESS;
 end;
 
-function TServiceManager.AddServiceQuick(const serviceID, impServiceID: MyString;
+function TServiceManager.AddServiceQuick(const serviceID, impServiceID: string;
     const serviceClass: TPluginClass=nil; active: Boolean=True; isSingleton:
     Boolean=False; isExtendPoint: Boolean=False): Boolean;
 var
@@ -824,13 +772,13 @@ begin
   Result := FServiceList.Count;
 end;
 
-function TServiceManager.ExistService(const serviceID: MyString): Boolean;
+function TServiceManager.ExistService(const serviceID: string): Boolean;
 begin
   //Result := FServiceList.IndexOf(serviceID) > -1;
   Result := GetServiceIdx(serviceID) > -1;
 end;
 
-function TServiceManager.GetExtService(const serviceID: MyString; idx: Integer):
+function TServiceManager.GetExtService(const serviceID: string; idx: Integer):
     IInterface;
 var
   i, j: Integer;
@@ -856,7 +804,7 @@ begin
   end;
 end;
 
-function TServiceManager.GetExtServiceInfo(const serviceID: MyString; idx: Integer): IServiceInfo;
+function TServiceManager.GetExtServiceInfo(const serviceID: string; idx: Integer): IServiceInfo;
 var
   i, j: Integer;
   sv: IServiceInfo;
@@ -879,7 +827,7 @@ begin
   end;
 end;
 
-//function TServiceManager.GetExtServiceCount(const serviceID: MyString): Integer;
+//function TServiceManager.GetExtServiceCount(const serviceID: string): Integer;
 //var
 //  sv: IServiceInfo;
 //begin
@@ -892,7 +840,7 @@ end;
 //  end;
 //end;
 
-function TServiceManager.GetExtServiceCount(const serviceID: MyString): Integer;
+function TServiceManager.GetExtServiceCount(const serviceID: string): Integer;
 var
   i, j: Integer;
   sv: IServiceInfo;
@@ -919,7 +867,7 @@ begin
   Result := Self;
 end;
 
-function TServiceManager.GetService(const serviceID: MyString): IInterface;
+function TServiceManager.GetService(const serviceID: string): IInterface;
   function GetServiceIdx: Integer;
   begin
     Result := FServiceList.IndexOf(serviceID);
@@ -973,7 +921,7 @@ begin
   end;
 end;
 
-function TServiceManager.GetServiceIdx(const serviceID: MyString): Integer;
+function TServiceManager.GetServiceIdx(const serviceID: string): Integer;
 begin
   Result := FServiceList.IndexOf(serviceID);
   if Result = -1 then
@@ -986,7 +934,7 @@ begin
   end;
 end;
 
-function TServiceManager.GetServiceInfo(const serviceID: MyString): IServiceInfo;
+function TServiceManager.GetServiceInfo(const serviceID: string): IServiceInfo;
 var
   idx: Integer;
 begin
@@ -1061,7 +1009,7 @@ begin
   end;
 end;
 
-function TServiceManager.ServiceIsActive(const serviceID: MyString): Boolean;
+function TServiceManager.ServiceIsActive(const serviceID: string): Boolean;
 var
   idx: Integer;
   sv: IServiceInfo;
@@ -1075,7 +1023,7 @@ begin
   Result := sv.IsActive;
 end;
 
-function TServiceManager.StartService(const serviceID: MyString): Boolean;
+function TServiceManager.StartService(const serviceID: string): Boolean;
 var
   idx: Integer;
   sv: IServiceInfo;
@@ -1100,7 +1048,7 @@ begin
      Result := False;
 end;
 
-function TServiceManager.StopService(const serviceID: MyString): Boolean;
+function TServiceManager.StopService(const serviceID: string): Boolean;
 var
   idx: Integer;
   sv: IServiceInfo;
@@ -1125,7 +1073,7 @@ begin
      Result := False;
 end;
 
-function TServiceManager.UnRegService(const serviceID: MyString): Integer;
+function TServiceManager.UnRegService(const serviceID: string): Integer;
 var
   idx, idx2: Integer;
   sv, svTem: IServiceInfo;
@@ -1171,13 +1119,13 @@ begin
   inherited;
 end;
 
-function TPluginManager.CfgLoadPluginByPluginID(const pluginID: MyString):
+function TPluginManager.CfgLoadPluginByPluginID(const pluginID: string):
     Integer;
 var
   idx: Integer;
   sInfo: IServiceInfo;
   pInfo: IPluginInfo;
-  lid: MyString;
+  lid: string;
 begin
   //先检查plugin是否已加载，否则进行加载
   idx := FPluginList.IndexOf(pluginID);
@@ -1247,7 +1195,7 @@ begin
       Result := ERROR_PLUGIN_CONFIG_DOES_NOT_EXIST;
 end;
 
-function TPluginManager.CfgLoadPluginByServiceID(const serviceID: MyString):
+function TPluginManager.CfgLoadPluginByServiceID(const serviceID: string):
     Integer;
 begin
   if not GServiceManagerObj.ExistService(CONFIG_ID) then begin
@@ -1270,7 +1218,7 @@ var
   idx: Integer;
   cfg: IConfig;
   plg: IPluginInfo;
-  temS: MyString;
+  temS: string;
 begin
   if not GServiceManagerObj.ServiceIsActive(CONFIG_ID) then begin
     Result := ERROR_SERVICE_DONT_NOT_EXIST;
@@ -1304,7 +1252,7 @@ begin
   Result := IPluginInfo(Pointer(FPluginList.Objects[idx]));
 end;
 
-function TPluginManager.GetPluginInfoByPluginID(const pluginID: MyString):
+function TPluginManager.GetPluginInfoByPluginID(const pluginID: string):
     IPluginInfo;
 begin
   Result := GetPluginInfoByIndex(FPluginList.IndexOf(pluginID));
@@ -1320,8 +1268,8 @@ begin
   Result := Self;
 end;
 
-function TPluginManager.LoadPluginDirect(const pluginFile: MyString; const
-    useLoader: MyString=''): Integer;
+function TPluginManager.LoadPluginDirect(const pluginFile: string; const
+    useLoader: string=''): Integer;
 var
   idx, count: Integer;
   sInfo: IServiceInfo;
@@ -1404,7 +1352,7 @@ begin
   Result := ERROR_SUCCESS;
 end;
 
-function TPluginManager.SetPluginActiveByPluginID(const pluginID: MyString):
+function TPluginManager.SetPluginActiveByPluginID(const pluginID: string):
     Integer;
 begin
   Result := FPluginList.IndexOf(pluginID);
@@ -1435,7 +1383,7 @@ begin
   Result := ERROR_SUCCESS;
 end;
 
-function TPluginManager.SetPluginDeActiveByPluginID(const pluginID: MyString):
+function TPluginManager.SetPluginDeActiveByPluginID(const pluginID: string):
     Integer;
 begin
   Result := FPluginList.IndexOf(pluginID);
@@ -1469,7 +1417,7 @@ begin
   end;
 end;
 
-function TPluginManager.UnLoadPluginByPluginID(const pluginID: MyString): Integer;
+function TPluginManager.UnLoadPluginByPluginID(const pluginID: string): Integer;
 begin
   Result := FPluginList.IndexOf(pluginID);
   if Result>-1 then
@@ -1478,11 +1426,11 @@ begin
     Result := ERROR_PLUGIN_DONT_NOT_EXIST;
 end;
 
-function TPluginManager.UpdatePluginDirect(const pluginFile: MyString; const
-    useLoader: MyString=''): Integer;
+function TPluginManager.UpdatePluginDirect(const pluginFile: string; const
+    useLoader: string=''): Integer;
 var
   idx: Integer;
-  temS, pid: MyString;
+  temS, pid: string;
   pInfo: IPluginInfo;
   reLoad: Boolean;
 begin
@@ -1569,46 +1517,27 @@ begin
   inherited;
 end;
 
-function TPluginLoader.DLLGetObject(const serviceID: MyString): IInterface;
+function TPluginLoader.DLLGetObject(const serviceID: string): IInterface;
 type
   TDLLGetObject = function(const serviceID: PAnsiChar): IInterface; stdcall;
   TDLLGetObjectForC = function(const serviceID: PAnsiChar): Pointer; stdcall;
 var
   DLLGetObject: TDLLGetObject;
-{$IFDEF _USE_FOR_CPP}
-  //DLLGetObjectForC: TDLLGetObjectForC;
-  DLLGetObjectForC: Pointer;
-{$ENDIF}
 begin
   Result := nil;
   if FDllHandle = 0 then
     Exit;
 
   DLLGetObject := GetProcAddress(FDllHandle, 'DLLGetObject');
-  {$IFDEF _USE_FOR_CPP}
-  DLLGetObjectForC := GetProcAddress(FDllHandle, 'GetCppObject');
-  {$ENDIF}
   if Assigned(DLLGetObject) then
     Result := DLLGetObject(PAnsiChar(AnsiString(serviceID)))
-  {$IFDEF _USE_FOR_CPP}
-  else if Assigned(DLLGetObjectForC) then begin
-    Result := IInterface(TDLLGetObjectForC(DLLGetObjectForC)(PAnsiChar(AnsiString(serviceID))));
-    Result._AddRef;
-  end;
-  {$ENDIF}
 end;
 
 function TPluginLoader.DLLGetPluginInfo(const im: IPluginInfo): Integer;
 type
   TDLLGetPluginInfo = procedure(const im: IPluginInfo); stdcall;
-{$IFDEF _USE_FOR_CPP}
-  TDLLGetPluginInfoForC = procedure(const im: IPluginInfoForC); stdcall;
-{$ENDIF}
 var
   DLLGetPluginInfo: TDLLGetPluginInfo;
-{$IFDEF _USE_FOR_CPP}
-  DLLGetPluginInfoForC: TDLLGetPluginInfoForC;
-{$ENDIF}
 begin
   if not Assigned(im) then
   begin
@@ -1622,16 +1551,9 @@ begin
   end;
 
   DLLGetPluginInfo := GetProcAddress(FDllHandle, 'DLLGetPluginInfo');
-{$IFDEF _USE_FOR_CPP}
-  DLLGetPluginInfoForC := GetProcAddress(FDllHandle, 'GetPluginInfo');
-{$ENDIF}
 
   if Assigned(DLLGetPluginInfo) then
     DLLGetPluginInfo(TPluginInfo(im.GetSelfObject))
-{$IFDEF _USE_FOR_CPP}
-  else if Assigned(DLLGetPluginInfoForC) then
-    DLLGetPluginInfoForC(TPluginInfo(im.GetSelfObject))
-{$ENDIF}
   else begin
     Result := ERROR_NOT_PLUGIN_DLL;
     Exit;
@@ -1646,119 +1568,67 @@ end;
 procedure TPluginLoader.DLLInitializePlugin(const IServiceMgr: IServiceManager);
 type
   TDLLInitializePlugin = procedure(const IServiceMgr: IServiceManager); stdcall;
-{$IFDEF _USE_FOR_CPP}
-  TDLLInitializePluginForC = procedure(const IServiceMgr: IServiceManagerForC); stdcall;
-{$ENDIF}
 var
   DLLInitializePlugin: TDLLInitializePlugin;
-{$IFDEF _USE_FOR_CPP}
-  DLLInitializePluginForC: TDLLInitializePluginForC;
-{$ENDIF}
 begin
   if FDllHandle = 0 then begin
     Exit;
   end;
 
   DLLInitializePlugin := GetProcAddress(FDllHandle, 'DLLInitializePlugin');
-{$IFDEF _USE_FOR_CPP}
-  DLLInitializePluginForC := GetProcAddress(FDllHandle, 'InitializePlugin');
-{$ENDIF}
   if Assigned(DLLInitializePlugin) then
     //DLLInitializePlugin(IServiceMgr);
     DLLInitializePlugin(TServiceManager(IServiceMgr.GetSelfObject))
-{$IFDEF _USE_FOR_CPP}
-  else if Assigned(DLLInitializePluginForC) then
-    DLLInitializePluginForC(TServiceManager(IServiceMgr.GetSelfObject));
-{$ENDIF}
 end;
 
-procedure TPluginLoader.DLLServiceStart(const serviceID: MyString);
+procedure TPluginLoader.DLLServiceStart(const serviceID: string);
 type
   TDLLServiceStart = procedure(const serviceID: PAnsiChar); stdcall;
-{$IFDEF _USE_FOR_CPP}
-  TDLLServiceStartForC = procedure(const serviceID: PAnsiChar); stdcall;
-{$ENDIF}
 var
   DLLServiceStart: TDLLServiceStart;
-{$IFDEF _USE_FOR_CPP}
-  DLLServiceStartForC: TDLLServiceStartForC;
-{$ENDIF}
 begin
   if FDllHandle = 0 then begin
     Exit;
   end;
 
   DLLServiceStart := GetProcAddress(FDllHandle, 'DLLServiceStart');
-{$IFDEF _USE_FOR_CPP}
-  DLLServiceStartForC := GetProcAddress(FDllHandle, 'ServiceStart');
-{$ENDIF}
   if Assigned(DLLServiceStart) then
     DLLServiceStart(PAnsiChar(AnsiString(serviceID)))
-{$IFDEF _USE_FOR_CPP}
-  else if Assigned(DLLServiceStartForC) then
-    DLLServiceStartForC(PAnsiChar(AnsiString(serviceID)));
-{$ENDIF}
 end;
 
-procedure TPluginLoader.DLLServiceStop(const serviceID: MyString);
+procedure TPluginLoader.DLLServiceStop(const serviceID: string);
 type
   TDLLServiceStop = procedure(const serviceID: PAnsiChar); stdcall;
-{$IFDEF _USE_FOR_CPP}
-  TDLLServiceStopForC = procedure(const serviceID: PAnsiChar); stdcall;
-{$ENDIF}
 var
   DLLServiceStop: TDLLServiceStop;
-{$IFDEF _USE_FOR_CPP}
-  DLLServiceStopForC: TDLLServiceStopForC;
-{$ENDIF}
 begin
   if FDllHandle = 0 then begin
     Exit;
   end;
 
   DLLServiceStop := GetProcAddress(FDllHandle, 'DLLServiceStop');
-{$IFDEF _USE_FOR_CPP}
-  DLLServiceStopForC := GetProcAddress(FDllHandle, 'ServiceStop');
-{$ENDIF}
   if Assigned(DLLServiceStop) then
     DLLServiceStop(PAnsiChar(AnsiString(serviceID)))
-{$IFDEF _USE_FOR_CPP}
-  else if Assigned(DLLServiceStopForC) then
-    DLLServiceStopForC(PAnsiChar(AnsiString(serviceID)));
-{$ENDIF}
 end;
 
 procedure TPluginLoader.DLLUninitializePlugin(const IServiceMgr:
     IServiceManager);
 type
   TDLLUninitializePlugin = procedure(const IServiceMgr: IServiceManager); stdcall;
-{$IFDEF _USE_FOR_CPP}
-  TDLLUninitializePluginForC = procedure(const IServiceMgr: IServiceManagerForC); stdcall;
-{$ENDIF}
 var
   DLLUninitializePlugin: TDLLUninitializePlugin;
-{$IFDEF _USE_FOR_CPP}
-  DLLUninitializePluginForC: TDLLUninitializePluginForC;
-{$ENDIF}
 begin
   if FDllHandle = 0 then begin
     Exit;
   end;
 
   DLLUninitializePlugin := GetProcAddress(FDllHandle, 'DLLUninitializePlugin');
-{$IFDEF _USE_FOR_CPP}
-  DLLUninitializePluginForC := GetProcAddress(FDllHandle, 'UninitializePlugin');
-{$ENDIF}
   if Assigned(DLLUninitializePlugin) then
     //DLLUninitializePlugin(IServiceMgr);
     DLLUninitializePlugin(TServiceManager(IServiceMgr.GetSelfObject))
-{$IFDEF _USE_FOR_CPP}
-  else if Assigned(DLLUninitializePluginForC) then
-    DLLUninitializePluginForC(TServiceManager(IServiceMgr.GetSelfObject));
-{$ENDIF}
 end;
 
-function TPluginLoader.GetLoadedPluginFile: MyString;
+function TPluginLoader.GetLoadedPluginFile: string;
 begin
   Result := FDLLFile;
 end;
@@ -1768,7 +1638,7 @@ begin
   Result := Self;
 end;
 
-function TPluginLoader.LoadPlugin(const pluginFile: MyString): Integer;
+function TPluginLoader.LoadPlugin(const pluginFile: string): Integer;
 begin
   if not FileExists(pluginFile) then
   begin
@@ -1808,7 +1678,7 @@ end;
 function TPluginLoader.UnLoadPlugin: Integer;
 begin
    Result := ERROR_SUCCESS;
-  if LowerCase(ExtractFileExt(PMyChar(MyString(FDLLFile)))) = '.bpl' then begin
+  if LowerCase(ExtractFileExt(PMyChar(string(FDLLFile)))) = '.bpl' then begin
     //UnregisterModuleClasses(FDllHandle);
     UnloadPackage(FDllHandle);
   end;// else
