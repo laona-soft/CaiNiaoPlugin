@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, System.SysUtils, System.Classes, System.StrUtils, System.IniFiles,
-  ResultCode, XmlConfig, CaiNiaoInterface;
+  ResultCode, XmlConfig, WisdomCoreInterfaceForD;
 
 type
   TCaiNiaoFrame = class(TObject)

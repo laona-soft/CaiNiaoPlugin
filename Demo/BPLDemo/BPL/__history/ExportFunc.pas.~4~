@@ -39,7 +39,7 @@ begin
   im.SetVersion('1.0.0');//插件版本
   im.SetUpdateHistory('Ver1.0.0 20140729');//插件更新历史
 
-  with im.AppendServiceInfo(IID_BPLTest) do begin
+  with im.AppendServiceInfo() do begin
     SetAuthor('IceAir'); //服务接口作者
     SetComment('展示BPL中的Form的服务接口');//服务功能特点简要说明
     SetSingleton(True);//服务是否要以单例模式运行

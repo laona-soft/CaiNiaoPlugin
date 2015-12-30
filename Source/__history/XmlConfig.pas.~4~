@@ -12,7 +12,7 @@ interface
 
 uses
   Winapi.Windows, System.SysUtils, Xml.xmldom, Xml.XmlIntf, Xml.XMLDoc,
-  Winapi.ActiveX, CaiNiaoInterface;
+  Winapi.ActiveX, CaiNiaoInterfaceForD;
 
 type
   TXmlConfig = class(TPluginInterfacedObject, IConfig)

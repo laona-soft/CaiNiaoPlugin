@@ -4,12 +4,9 @@ interface
 
 uses Winapi.Windows;
 
-const
-  IID_BPLTest = '{E5C20236-24A0-41D3-B65A-D8258CD6BCFA}';
-
 type
   IBPLTest = interface(IInterface)
-  [IID_BPLTest]
+  ['{C2098FCC-591A-49AA-B7D9-A8DBC89668E7}']
     function ShowUI(const parentHWND: HWND): HWND;
     procedure CloseUI(const uiHWND: HWND);
   end;

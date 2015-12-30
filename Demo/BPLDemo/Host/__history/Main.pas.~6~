@@ -12,11 +12,9 @@ type
     btn1: TButton;
     btn2: TButton;
     xpmnfst1: TXPManifest;
-    btn3: TButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btn1Click(Sender: TObject);
     procedure btn2Click(Sender: TObject);
-    procedure btn3Click(Sender: TObject);
   private
     { Private declarations }
     ITest: IBPLTest;
@@ -51,14 +49,6 @@ begin
   if Assigned(ITest) then
     ITest.CloseUI(pnl1.Tag);
   ITest := nil;
-end;
-
-procedure TForm1.btn3Click(Sender: TObject);
-var
-  wokao: TStringList;
-begin
-  wokao := TStringList.Create;
-  wokao.Add('wokao');
 end;
 
 end.

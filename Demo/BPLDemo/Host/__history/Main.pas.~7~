@@ -53,12 +53,9 @@ begin
   ITest := nil;
 end;
 
-procedure TForm1.btn3Click(Sender: TObject);
-var
-  wokao: TStringList;
+eprocedure TForm1.btn3Click(Sender: TObject);
 begin
-  wokao := TStringList.Create;
-  wokao.Add('wokao');
+
 end;
 
-end.
+nd.

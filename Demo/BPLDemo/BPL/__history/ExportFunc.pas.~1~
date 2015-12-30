@@ -2,7 +2,7 @@ unit ExportFunc;
 
 interface
 
-uses CaiNiaoInterface, IntfCommon, Unit1;
+uses WisdomCoreInterfaceForD, IntfCommon, Unit1;
 
     function  DLLGetObject(const serviceID: PAnsiChar): IInterface; stdcall;
     procedure DLLGetPluginInfo(const im: IPluginInfo); stdcall;

@@ -55,10 +55,10 @@ end;
 
 procedure TForm1.btn3Click(Sender: TObject);
 var
-  wokao: TStringList;
+  asdf: TStringList;
 begin
-  wokao := TStringList.Create;
-  wokao.Add('wokao');
+  asdf := TStringList.Create;
+
 end;
 
 end.

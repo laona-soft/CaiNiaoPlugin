@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, XPMan, StdCtrls, Buttons, CaiNiaoInterface, IntfCommon;
+  Dialogs, XPMan, StdCtrls, Buttons, WisdomCoreInterfaceForD, IntfCommon;
 
 const
   IID_Cpp_sort_demo = '{4208E4A4-F017-495a-81AA-D650DA613F02}';

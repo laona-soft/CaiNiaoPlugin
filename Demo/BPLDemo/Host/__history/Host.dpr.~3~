@@ -1,7 +1,7 @@
 program Host;
 
 uses
-  CaiNiaoFrame,
+  CaiNiaoPlugin,
   Forms,
   Main in 'Main.pas' {Form1},
   IntfCommon in '..\BPL\IntfCommon.pas';
@@ -10,7 +10,6 @@ uses
 
 begin
   Application.Initialize;
-  ReportMemoryLeaksOnShutdown := Boolean(DebugHook);
   Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.
