@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2014/07/30 01:07:44.000.252,=E:\Work\Program\2014\WisdomPluginFramework\Demo\Splash\dll\Unit1.pas</Transaction>
+    <Transaction>2014/07/30 01:17:17.000.434,E:\Work\Program\2014\WisdomPluginFramework\Demo\Splash\dll\SplashForm.pas=E:\Work\Program\2014\WisdomPluginFramework\Demo\Splash\dll\Unit1.pas</Transaction>
+    <Transaction>2014/07/30 01:17:17.000.434,E:\Work\Program\2014\WisdomPluginFramework\Demo\Splash\dll\SplashForm.dfm=E:\Work\Program\2014\WisdomPluginFramework\Demo\Splash\dll\Unit1.dfm</Transaction>
+  </Transactions>
+</BorlandProject>

@@ -1,0 +1,59 @@
+unit Unit2;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Buttons, ExtCtrls;
+
+type
+  TForm2 = class(TForm)
+    Button1: TButton;
+    Panel1: TPanel;
+    SpeedButton1: TSpeedButton;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    procedure Button1Click(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
+    procedure Button1MouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form2: TForm2 = nil;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm2.Button1Click(Sender: TObject);
+begin
+  ShowMessage('成功了！');
+end;
+
+procedure TForm2.SpeedButton1Click(Sender: TObject);
+begin
+  MessageBox(Handle, '平面按钮来了！', '成功了！', MB_OK OR MB_ICONINFORMATION);
+end;
+
+procedure TForm2.Button1MouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if Button = mbRight then
+    ShowMessage('右键按下');
+end;
+
+procedure TForm2.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_RETURN then
+    Perform(WM_NEXTDLGCTL, 0, 0);
+end;
+
+end.

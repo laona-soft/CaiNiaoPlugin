@@ -1,0 +1,861 @@
+{*******************************************************}
+{                                                       }
+{       WisdomPluginFramework                           }
+{       2014 IceAir                                     }
+{       ice.air@126.com  QQ: 3216343                    }
+{                                                       }
+{*******************************************************}
+
+unit XmlConfig;
+
+{$INCLUDE Def.inc}
+
+interface
+  uses
+  {$IFDEF IDE_XE4up}
+  Winapi.Windows, System.SysUtils, Xml.xmldom, Xml.XmlIntf, Xml.XMLDoc,
+  {$ELSE}
+  Windows, SysUtils, xmldom, XMLIntf, msxmldom, XMLDoc, 
+  {$ENDIF}
+  {$IFDEF MSWINDOWS}
+  ActiveX,
+  {$ENDIF}
+  WisdomCoreInterfaceForD;
+
+type
+  TXmlConfig = class(TPluginInterfacedObject, IConfig)
+  protected
+    FXMLDoc: IXMLDocument;
+    procedure CreateXMLFile(const xmlFile: MyString);
+    function GoToExtPoint(const sid: MyString): IXMLNode;
+    function GoToPlugin(const pid: MyString): IXMLNode;
+    function GoToPluginHead: IXMLNode;
+    function GoToService(const sid: MyString): IXMLNode;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure AddExtendPoint(const sv: IServiceInfo); virtual;
+    procedure AddPlugin(const dllFile: MyString); virtual;
+    procedure AddService(const sv: IServiceInfo); virtual;
+    procedure DisableExtendPoint(const sid: MyString); virtual;
+    procedure DisablePlugin(const pid: MyString); virtual;
+    procedure DisableService(const serviceID: MyString); virtual;
+    procedure EnabledExtendPoint(const sid: MyString); virtual;
+    procedure EnabledPlugin(const pid: MyString); virtual;
+    procedure EnabledService(const serviceID: MyString); virtual;
+    function ExistExtPoint(const sid: MyString): Boolean; virtual;
+    function ExistPlugin(const pid: MyString): Boolean; virtual;
+    function ExistService(const sid: MyString): Boolean; virtual;
+    function ExtPointIsDisable(const sid: MyString): Boolean; virtual;
+    function GetExtImpServiceCount(const extSid: MyString): Integer; virtual;
+    function GetExtImpServiceID(const extSid: MyString; idx: Integer): MyString; virtual;
+    function GetPluginCount: Integer; virtual;
+    function GetPluginLoaderID(const pid: MyString): MyString; virtual;
+    function GetPluginLoadState(const pid: MyString): MyString; virtual;
+    procedure Open(const xmlFile: MyString); virtual;
+    function PluginDLL(const pid: MyString): MyString; virtual;
+    function PluginIDFromExtSid(const extSID: MyString): MyString; virtual;
+    function PluginIDFromIdx(idx: Integer): MyString; virtual;
+    function PluginIDFromSid(const sid: MyString): MyString; virtual;
+    function PluginIsDisable(const pid: MyString): Boolean; virtual;
+    procedure Reload; virtual;
+    procedure RemoveExtendPoint(const sid: MyString); virtual;
+    procedure RemovePlugin(const pid: MyString); virtual;
+    procedure RemoveService(const serviceID: MyString); virtual;
+    procedure Save; virtual;
+    function ServiceIsDisable(const sid: MyString): Boolean; virtual;
+    function ServiceIsSingleton(const sid: MyString): Boolean; virtual;
+    procedure SetExtendPointSingleton(const sid: MyString; setSingleton: Boolean); virtual;
+    procedure SetPluginLoaderID(const pid, lid: MyString); virtual;
+    procedure SetPluginLoadState(const pid, state: MyString); virtual;
+    procedure SetServiceSingleton(const serviceID: MyString; setSingleton:
+        Boolean); virtual;
+  end;
+
+implementation
+
+{
+********************************** TXmlConfig **********************************
+}
+constructor TXmlConfig.Create;
+begin
+  CoInitialize(nil);
+  Open('');
+end;
+
+destructor TXmlConfig.Destroy;
+begin
+  FXMLDoc := nil;
+  CoUninitialize;
+  inherited;
+end;
+
+procedure TXmlConfig.AddExtendPoint(const sv: IServiceInfo);
+var
+  xmlNode: IXMLNode;
+  pid: MyString;
+begin
+  if not Assigned(sv) then
+    Exit;
+
+  pid := sv.GetBelongToPlugin.GetPluginID;
+  if not ExistPlugin(pid) then
+    Exit;
+
+  xmlNode := GoToPlugin(pid).ChildNodes.FindNode('extend-point');
+  if not Assigned(xmlNode) then
+    xmlNode := GoToPlugin(pid).AddChild('extend-point');
+
+  with xmlNode.AddChild('extend') do begin
+    SetAttributeNS('name', '', sv.GetServiceName);
+    SetAttributeNS('ver', '', sv.GetVersion);
+    SetAttributeNS('singleton', '', sv.IsSingleton);
+    SetAttributeNS('disable', '', False);
+    SetAttributeNS('id', '', sv.GetServiceID);
+  end;
+end;
+
+procedure TXmlConfig.AddPlugin(const dllFile: MyString);
+var
+  i: Integer;
+  xmlNode, extPointNode, serviceNode: IXMLNode;
+  pluginInfo: IPluginInfo;
+begin
+  if not FileExists(dllFile) then
+    Exit;
+
+  if (FXMLDoc=nil) or (FXMLDoc.FileName='') then
+    Exit;
+
+  if not GServiceManager.ServiceIsActive(PLUGIN_INFO_ID) then
+    Exit;
+
+  pluginInfo := nil;
+  pluginInfo := GServiceManager.GetService(PLUGIN_INFO_ID) as IPluginInfo;
+  if pluginInfo.GetPluginLoader.LoadPlugin(dllFile) <> 0 then
+    Exit;
+
+  if pluginInfo.GetPluginLoader.DLLGetPluginInfo(pluginInfo) <> 0 then
+    Exit;
+
+  xmlNode := GoToPluginHead;
+  if Assigned(xmlNode) then
+    with xmlNode.AddChild('plugin') do begin
+      SetAttributeNS('id', '', pluginInfo.GetPluginID);
+      SetAttributeNS('name', '', pluginInfo.GetPluginName);
+      SetAttributeNS('load', '', 'when_use');
+      SetAttributeNS('disable', '', False);
+      //SetAttributeNS('dllname', '', dllFile); //20140730暂时注释使用绝对路径，改为使用相对路径
+      SetAttributeNS('dllname', '', ExtractRelativePath(ExtractFilePath(FXMLDoc.FileName), dllFile));
+      extPointNode := AddChild('extend-point');
+      serviceNode := AddChild('services');
+      for i := 0 to pluginInfo.GetServiceCount-1 do
+        if pluginInfo.GetServiceInfo(i).IsExtendPoint then
+          with extPointNode.AddChild('extend') do begin
+            SetAttributeNS('name', '', pluginInfo.GetServiceInfo(i).GetServiceName);
+            SetAttributeNS('ver', '', pluginInfo.GetServiceInfo(i).GetVersion);
+            SetAttributeNS('singleton', '', pluginInfo.GetServiceInfo(i).IsSingleton);
+            SetAttributeNS('disable', '', False);
+            SetAttributeNS('id', '', pluginInfo.GetServiceInfo(i).GetServiceID);
+          end
+        else
+          with serviceNode.AddChild('service') do begin
+            SetAttributeNS('name', '', pluginInfo.GetServiceInfo(i).GetServiceName);
+            SetAttributeNS('ver', '', pluginInfo.GetServiceInfo(i).GetVersion);
+            SetAttributeNS('singleton', '', pluginInfo.GetServiceInfo(i).IsSingleton);
+            SetAttributeNS('disable', '', False);
+            SetAttributeNS('id', '', pluginInfo.GetServiceInfo(i).GetServiceID);
+            SetAttributeNS('implement', '', pluginInfo.GetServiceInfo(i).GetImplementServiceID);
+          end;
+    end;
+end;
+
+procedure TXmlConfig.AddService(const sv: IServiceInfo);
+var
+  xmlNode: IXMLNode;
+  pid: MyString;
+begin
+  if not Assigned(sv) then
+    Exit;
+
+  pid := sv.GetBelongToPlugin.GetPluginID;
+  if not ExistPlugin(pid) then
+    Exit;
+
+  xmlNode := GoToPlugin(pid).ChildNodes.FindNode('services');
+  if not Assigned(xmlNode) then
+    xmlNode := GoToPlugin(pid).AddChild('services');
+
+  with xmlNode.AddChild('service') do begin
+    SetAttributeNS('name', '', sv.GetServiceName);
+    SetAttributeNS('ver', '', sv.GetVersion);
+    SetAttributeNS('singleton', '', sv.IsSingleton);
+    SetAttributeNS('disable', '', False);
+    SetAttributeNS('id', '', sv.GetServiceID);
+    SetAttributeNS('implement', '', sv.GetImplementServiceID);
+  end;
+end;
+
+procedure TXmlConfig.CreateXMLFile(const xmlFile: MyString);
+begin
+  //构建一个标准config.xml文件
+  FXMLDoc := NewXMLDocument;
+  FXMLDoc.Encoding:='UTF-8';
+  FXMLDoc.Options := FXMLDoc.Options + [doNodeAutoIndent];
+  FXMLDoc.DocumentElement:=FXMLDoc.CreateNode('core-config', ntElement);
+  FXMLDoc.DocumentElement.AddChild('plugin-dll');
+  FXMLDoc.SaveToFile(xmlFile);
+  FXMLDoc := nil;
+end;
+
+procedure TXmlConfig.DisableExtendPoint(const sid: MyString);
+begin
+  if ExistExtPoint(sid) then
+    GoToExtPoint(sid).SetAttributeNS('disable', '', True);
+end;
+
+procedure TXmlConfig.DisablePlugin(const pid: MyString);
+var
+  xmlNode: IXMLNode;
+begin
+  xmlNode := GoToPlugin(pid);
+  if Assigned(xmlNode) then
+    xmlNode.SetAttributeNS('disable', '', True);
+end;
+
+procedure TXmlConfig.DisableService(const serviceID: MyString);
+begin
+  if ExistService(serviceID) then
+    GoToService(serviceID).SetAttributeNS('disable', '', True);
+end;
+
+procedure TXmlConfig.EnabledExtendPoint(const sid: MyString);
+begin
+  if ExistExtPoint(sid) then
+    GoToExtPoint(sid).SetAttributeNS('disable', '', False);
+end;
+
+procedure TXmlConfig.EnabledPlugin(const pid: MyString);
+var
+  xmlNode: IXMLNode;
+begin
+  xmlNode := GoToPlugin(pid);
+  if Assigned(xmlNode) then
+    xmlNode.SetAttributeNS('disable', '', False);
+end;
+
+procedure TXmlConfig.EnabledService(const serviceID: MyString);
+begin
+  if ExistService(serviceID) then
+    GoToService(serviceID).SetAttributeNS('disable', '', False);
+end;
+
+function TXmlConfig.ExistExtPoint(const sid: MyString): Boolean;
+begin
+  Result := PluginIDFromExtSid(sid) <> '';
+end;
+
+function TXmlConfig.ExistPlugin(const pid: MyString): Boolean;
+begin
+  Result := GoToPlugin(pid)<>nil;
+end;
+
+function TXmlConfig.ExistService(const sid: MyString): Boolean;
+begin
+  Result := GoToService(sid) <> nil;
+end;
+
+function TXmlConfig.ExtPointIsDisable(const sid: MyString): Boolean;
+var
+  xmlNode: IXMLNode;
+begin
+  Result := false;
+  xmlNode := GoToExtPoint(sid);
+  if (not Assigned(xmlNode)) then
+    Exit;
+  if xmlNode.HasAttribute('disable') then
+    Result := xmlNode.GetAttributeNS('disable', '');
+end;
+
+function TXmlConfig.GetExtImpServiceCount(const extSid: MyString): Integer;
+var
+  i, j: Integer;
+  xmlNode, tempNode: IXMLNode;
+begin
+  //统计所有插件dll中的实现ext的服务数量
+  Result := 0;
+
+  xmlNode := GoToPluginHead; //<plugin-dll>
+  if (not Assigned(xmlNode)) or (not xmlNode.HasChildNodes) then
+    Exit;
+
+  for i:=0 to xmlNode.ChildNodes.Count-1 do
+    with xmlNode.ChildNodes.Get(i) do begin  //for each <plugin>
+      if NodeName<>'plugin' then
+        Continue;
+      tempNode := ChildNodes.FindNode('services');
+      if Assigned(tempNode) then  //<services>
+        for j:=0 to tempNode.ChildNodes.Count-1 do
+          with tempNode.ChildNodes.Get(j) do begin //<service>
+            if NodeName<>'service' then
+              Continue;
+            if HasAttribute('implement') and (GetAttributeNS('implement', '')=extSid) then begin
+              Inc(Result);
+            end;
+          end;
+    end;
+end;
+
+function TXmlConfig.GetExtImpServiceID(const extSid: MyString; idx: Integer):
+    MyString;
+var
+  i, j, pos: Integer;
+  xmlNode, tempNode: IXMLNode;
+begin
+  Result := '';
+
+  xmlNode := GoToPluginHead; //<plugin-dll>
+  if (not Assigned(xmlNode)) or (not xmlNode.HasChildNodes) then
+    Exit;
+
+  pos := 0;
+  for i:=0 to xmlNode.ChildNodes.Count-1 do
+    with xmlNode.ChildNodes.Get(i) do begin  //for each <plugin>
+      if NodeName<>'plugin' then
+        Continue;
+      tempNode := ChildNodes.FindNode('services');
+      if Assigned(tempNode) then  //<services>
+        for j:=0 to tempNode.ChildNodes.Count-1 do
+          with tempNode.ChildNodes.Get(j) do begin //<service>
+            if NodeName<>'service' then
+              Continue;
+            if HasAttribute('implement') and (GetAttributeNS('implement', '')=extSid) then begin
+              if idx = pos then begin
+                Result := GetAttributeNS('id', '');
+                Exit;
+              end;
+              Inc(Pos);
+            end;
+          end;
+   end;
+end;
+
+function TXmlConfig.GetPluginCount: Integer;
+var
+  i: Integer;
+  xmlNode: IXMLNode;
+begin
+  Result := 0;
+  xmlNode := GoToPluginHead;
+  if (not Assigned(xmlNode)) or (not xmlNode.HasChildNodes) then
+    Exit;
+
+  for i := 0 to xmlNode.ChildNodes.Count-1 do
+    with xmlNode.ChildNodes.Get(i) do
+      if NodeName = 'plugin' then
+        Inc(Result);
+  //Result := xmlNode.ChildNodes.Count;
+end;
+
+function TXmlConfig.GetPluginLoaderID(const pid: MyString): MyString;
+var
+  xmlNode: IXMLNode;
+begin
+  Result := '';
+  xmlNode := GoToPlugin(pid);
+  if (not Assigned(xmlNode)) then
+    Exit;
+
+  if xmlNode.HasAttribute('loader') then
+    Result := LowerCase(xmlNode.GetAttributeNS('loader', ''));
+
+  if (LowerCase(Result) = '') or (LowerCase(Result) = 'default') then
+    Result := PLUGIN_LOADER;
+end;
+
+function TXmlConfig.GetPluginLoadState(const pid: MyString): MyString;
+var
+  xmlNode: IXMLNode;
+begin
+  Result := '';
+  xmlNode := GoToPlugin(pid);
+  if (not Assigned(xmlNode)) then
+    Exit;
+
+  if xmlNode.HasAttribute('load') then
+    Result := LowerCase(xmlNode.GetAttributeNS('load', ''));
+end;
+
+function TXmlConfig.GoToExtPoint(const sid: MyString): IXMLNode;
+var
+  i, j: Integer;
+  xmlNode, tempNode: IXMLNode;
+begin
+  Result := nil;
+  xmlNode := GoToPluginHead; //<plugin-dll>
+  if (not Assigned(xmlNode)) or (not xmlNode.HasChildNodes) then
+    Exit;
+
+  for i:=0 to xmlNode.ChildNodes.Count-1 do
+    with xmlNode.ChildNodes.Get(i) do begin  //for each <module>
+      if NodeName<>'plugin' then
+        Continue;
+      tempNode := ChildNodes.FindNode('extend-point');
+      if Assigned(tempNode) then  //<services>
+        for j:=0 to tempNode.ChildNodes.Count-1 do
+          with tempNode.ChildNodes.Get(j) do begin //<service>
+            if NodeName<>'extend' then
+              Continue;
+            if HasAttribute('id') and (GetAttributeNS('id', '')=sid) then begin
+              Result := tempNode.ChildNodes.Get(j);
+              Exit;
+            end;
+          end;
+    end;
+end;
+
+function TXmlConfig.GoToPlugin(const pid: MyString): IXMLNode;
+var
+  i: Integer;
+  xmlNode: IXMLNode;
+begin
+  Result := nil;
+  xmlNode := GoToPluginHead;  //<plugin-dll>
+  if (not Assigned(xmlNode)) or (not xmlNode.HasChildNodes) then
+    Exit;
+  for i:=0 to xmlNode.ChildNodes.Count-1 do
+    with xmlNode.ChildNodes.Get(i) do begin   //<module>
+      if (NodeName='plugin')
+        and (HasAttribute('id'))
+          and (GetAttributeNS('id', '')=pid) then begin
+        Result := xmlNode.ChildNodes.Get(i);
+        Exit;
+      end;
+    end;
+end;
+
+function TXmlConfig.GoToPluginHead: IXMLNode;
+var
+  xmlNode: IXMLNode;
+begin
+  Result := nil;
+  if not Assigned(FXMLDoc) then
+    Exit;
+
+  xmlNode := FXMLDoc.ChildNodes.FindNode('core-config');
+  if (not Assigned(xmlNode)) or (not xmlNode.HasChildNodes) then
+    Exit;
+
+  Result := xmlNode.ChildNodes.FindNode('plugin-dll');
+end;
+
+function TXmlConfig.GoToService(const sid: MyString): IXMLNode;
+var
+  i, j: Integer;
+  xmlNode, tempNode: IXMLNode;
+begin
+  Result := nil;
+  xmlNode := GoToPluginHead; //<plugin-dll>
+  if (not Assigned(xmlNode)) or (not xmlNode.HasChildNodes) then
+    Exit;
+
+  for i:=0 to xmlNode.ChildNodes.Count-1 do
+    with xmlNode.ChildNodes.Get(i) do begin  //for each <module>
+      if NodeName<>'plugin' then
+        Continue;
+      tempNode := ChildNodes.FindNode('services');
+      if Assigned(tempNode) then  //<services>
+        for j:=0 to tempNode.ChildNodes.Count-1 do
+          with tempNode.ChildNodes.Get(j) do begin //<service>
+            if NodeName<>'service' then
+              Continue;
+            if HasAttribute('id') and (GetAttributeNS('id', '')=sid) then begin
+              Result := tempNode.ChildNodes.Get(j);
+              Exit;
+            end;
+          end;
+    end;
+end;
+
+procedure TXmlConfig.Open(const xmlFile: MyString);
+var
+  tem: MyString;
+begin
+  FXMLDoc := nil;
+  if FileExists(xmlFile) then
+    FXMLDoc := LoadXMLDocument(xmlFile)
+  else if (LowerCase(ExtractFileExt(xmlFile)) = '.xml')
+    and (Length(ExtractFileName(xmlFile))>4) then begin
+    CreateXMLFile(xmlFile);
+    FXMLDoc := LoadXMLDocument(xmlFile)
+  end else begin
+    tem := ExtractFilePath(GetModuleName(0)) + 'config.xml';
+    if FileExists(tem) then
+      FXMLDoc := LoadXMLDocument(tem);
+  end;
+end;
+
+function PathIsRelativeA(const lpszFile: PAnsiChar): Boolean; stdcall; external 'shlwapi.dll';
+function PathCombineA(lpszDest: PAnsiChar; const lpszDir, lpszFile:PAnsiChar): PAnsiChar; stdcall; external 'shlwapi.dll';
+//相对路径转绝对路径
+function GetAbsolutePathEx(basePath, relativePath: MyString): MyString;
+var
+   dest: AnsiString;
+   b1,r1: AnsiString;
+begin
+  b1 := ExtractFilePath(basePath);
+  r1 := relativePath;
+  if PathIsRelativeA(PAnsiChar(r1)) then begin
+    SetLength(dest, Length(b1)+Length(r1));
+    PathCombineA(PAnsiChar(dest), PAnsiChar(b1), PAnsiChar(r1));
+    Result := WideString(dest);
+    SetLength(dest, 0);
+  end else
+    Result := relativePath;
+end;
+
+function TXmlConfig.PluginDLL(const pid: MyString): MyString;
+var
+  xmlNode: IXMLNode;
+begin
+  xmlNode := GoToPlugin(pid);
+  if Assigned(xmlNode) and xmlNode.HasAttribute('dllname') then begin
+    Result := GetAbsolutePathEx(FXMLDoc.FileName, xmlNode.GetAttributeNS('dllname', ''));
+  end else
+    Result := '';
+end;
+
+//20140731：暂时注释，以下函数使用绝对路径，可用($APP_PATH)宏
+//function TXmlConfig.PluginDLL(const pid: MyString): MyString;
+//var
+//  xmlNode: IXMLNode;
+//begin
+//  xmlNode := GoToPlugin(pid);
+//  if Assigned(xmlNode) and xmlNode.HasAttribute('dllname') then begin
+//    Result := xmlNode.GetAttributeNS('dllname', '');
+//    if Pos('($APP_PATH)', UpperCase(Result))>0 then
+//      //Result := ExtractFilePath(GetModuleName(0)) + ExtractFileName(Result);
+//      Result := StringReplace(Result, '($APP_PATH)', ExtractFilePath(FXMLDoc.FileName), [rfReplaceAll, rfIgnoreCase]);
+//  end else
+//    Result := '';
+//end;
+
+function TXmlConfig.PluginIDFromExtSid(const extSID: MyString): MyString;
+var
+  i, j: Integer;
+  xmlNode, tempNode: IXMLNode;
+begin
+  Result := '';
+  xmlNode := GoToPluginHead; //<plugin-dll>
+  if (not Assigned(xmlNode)) or (not xmlNode.HasChildNodes) then
+    Exit;
+
+  for i:=0 to xmlNode.ChildNodes.Count-1 do
+    with xmlNode.ChildNodes.Get(i) do begin  //for each <module>
+      if NodeName<>'plugin' then
+        Continue;
+      tempNode := ChildNodes.FindNode('extend-point');
+      if Assigned(tempNode) then  //<extend-point>
+        for j:=0 to tempNode.ChildNodes.Count-1 do
+          with tempNode.ChildNodes.Get(j) do begin //<extend>
+            if NodeName<>'extend' then
+              Continue;
+            if HasAttribute('id') and (GetAttributeNS('id', '')=extSID) then
+              if xmlNode.ChildNodes.Get(i).HasAttribute('id') then begin
+                Result := xmlNode.ChildNodes.Get(i).GetAttributeNS('id', '');
+                Exit;
+              end;
+          end;
+    end;
+end;
+
+function TXmlConfig.PluginIDFromIdx(idx: Integer): MyString;
+var
+  i, idxPos: Integer;
+  xmlNode: IXMLNode;
+begin
+  Result := '';
+  xmlNode := GoToPluginHead; //<plugin-dll>
+  if (not Assigned(xmlNode))
+    or (not xmlNode.HasChildNodes)
+      or ((idx<0) or (idx>=xmlNode.ChildNodes.Count)) then
+    Exit;
+
+  idxPos := 0;
+  for i:=0 to xmlNode.ChildNodes.Count-1 do
+    with xmlNode.ChildNodes.Get(i) do begin  //for each <module>
+      if NodeName<>'plugin' then
+        Continue;
+      if idxPos=idx then
+        if HasAttribute('id') then begin
+          Result := GetAttributeNS('id', '');
+          Exit;
+        end;
+      Inc(idxPos);
+    end;
+end;
+
+function TXmlConfig.PluginIDFromSid(const sid: MyString): MyString;
+var
+  i, j: Integer;
+  xmlNode, tempNode: IXMLNode;
+begin
+  Result := '';
+  xmlNode := GoToPluginHead; //<plugin-dll>
+  if (not Assigned(xmlNode)) or (not xmlNode.HasChildNodes) then
+    Exit;
+
+  for i:=0 to xmlNode.ChildNodes.Count-1 do
+    with xmlNode.ChildNodes.Get(i) do begin  //for each <module>
+      if NodeName<>'plugin' then
+        Continue;
+      tempNode := ChildNodes.FindNode('services');
+      if Assigned(tempNode) then  //<services>
+        for j:=0 to tempNode.ChildNodes.Count-1 do
+          with tempNode.ChildNodes.Get(j) do begin //<service>
+            if NodeName<>'service' then
+              Continue;
+            if HasAttribute('id') and (GetAttributeNS('id', '')=sid) then
+              if xmlNode.ChildNodes.Get(i).HasAttribute('id') then begin
+                Result := xmlNode.ChildNodes.Get(i).GetAttributeNS('id', '');
+                Exit;
+              end;
+          end;
+    end;
+end;
+
+function TXmlConfig.PluginIsDisable(const pid: MyString): Boolean;
+var
+  xmlNode: IXMLNode;
+begin
+  Result := false;
+  xmlNode := GoToPlugin(pid);
+  if (not Assigned(xmlNode)) then
+    Exit;
+
+  if xmlNode.HasAttribute('disable') then
+    Result := xmlNode.GetAttributeNS('disable', '');
+end;
+
+procedure TXmlConfig.Reload;
+begin
+  Open(FXMLDoc.FileName);
+  if FXMLDoc <> nil then
+    with GServiceManager.GetService(PLUGIN_MANAGER_ID) as IPluginManager do
+      CfgReLoadPlugins;
+end;
+
+procedure TXmlConfig.RemoveExtendPoint(const sid: MyString);
+var
+  xmlNode: IXMLNode;
+begin
+  if not ExistExtPoint(sid) then
+    Exit;
+
+  xmlNode := GoToExtPoint(sid);
+  if not Assigned(xmlNode) then
+    Exit;
+  xmlNode.ParentNode.ChildNodes.Remove(xmlNode);
+end;
+
+procedure TXmlConfig.RemovePlugin(const pid: MyString);
+var
+  xmlNode: IXMLNode;
+begin
+  xmlNode := GoToPlugin(pid);
+  if (not Assigned(xmlNode)) then
+    Exit;
+
+  xmlNode.ParentNode.ChildNodes.Remove(xmlNode);
+end;
+
+procedure TXmlConfig.RemoveService(const serviceID: MyString);
+var
+  xmlNode: IXMLNode;
+begin
+  if not ExistService(serviceID) then
+    Exit;
+
+  xmlNode := GoToService(serviceID);
+  if not Assigned(xmlNode) then
+    Exit;
+  xmlNode.ParentNode.ChildNodes.Remove(xmlNode);
+end;
+
+procedure TXmlConfig.Save;
+begin
+  if Assigned(FXMLDoc) then begin
+    FXMLDoc.Encoding:='UTF-8';
+    FXMLDoc.Options := FXMLDoc.Options + [doNodeAutoIndent];
+    FXMLDoc.SaveToFile(FXMLDoc.FileName);
+  end;
+end;
+
+function TXmlConfig.ServiceIsDisable(const sid: MyString): Boolean;
+var
+  xmlNode: IXMLNode;
+begin
+  Result := false;
+  xmlNode := GoToService(sid);
+  if (not Assigned(xmlNode)) then
+    Exit;
+  if xmlNode.HasAttribute('disable') then
+    Result := xmlNode.GetAttributeNS('disable', '');
+end;
+
+function TXmlConfig.ServiceIsSingleton(const sid: MyString): Boolean;
+var
+  xmlNode: IXMLNode;
+begin
+  Result := false;
+  xmlNode := GoToService(sid);
+  if (not Assigned(xmlNode)) then
+    Exit;
+  if xmlNode.HasAttribute('singleton') then
+    Result := xmlNode.GetAttributeNS('singleton', '');
+end;
+
+procedure TXmlConfig.SetExtendPointSingleton(const sid: MyString; setSingleton:
+    Boolean);
+begin
+  if ExistExtPoint(sid) then
+    GoToExtPoint(sid).SetAttributeNS('singleton', '', setSingleton);
+end;
+
+procedure TXmlConfig.SetPluginLoaderID(const pid, lid: MyString);
+var
+  xmlNode: IXMLNode;
+begin
+  xmlNode := GoToPlugin(pid);
+  if Assigned(xmlNode) then
+    xmlNode.SetAttributeNS('loader', '', lid);
+end;
+
+procedure TXmlConfig.SetPluginLoadState(const pid, state: MyString);
+var
+  xmlNode: IXMLNode;
+begin
+  xmlNode := GoToPlugin(pid);
+  if Assigned(xmlNode) then
+    xmlNode.SetAttributeNS('load', '', state);
+end;
+
+procedure TXmlConfig.SetServiceSingleton(const serviceID: MyString; setSingleton:
+    Boolean);
+begin
+  if ExistService(serviceID) then
+    GoToService(serviceID).SetAttributeNS('singleton', '', setSingleton);
+end;
+
+{
+procedure TXmlConfig.RemovePlugin(const pid: MyString);
+var
+  xmlNode, temNode: IXMLNode;
+begin
+  xmlNode := GoToPluginHead;
+  temNode := GoToPlugin(pid);
+  if (not Assigned(xmlNode)) or (not Assigned(temNode)) then
+    Exit;
+
+  xmlNode.ChildNodes.Remove(temNode);
+end;
+}
+
+//procedure TXmlConfig.CreateXMLFile(const xmlFile: MyString);
+//var
+//  value: MyString;
+//begin
+//  //构建一个标准config.xml文件
+//  value := '{00000000-0000-0000-0000-000000000000}';
+//  FXMLDoc := NewXMLDocument;
+//  FXMLDoc.Encoding:='UTF-8';
+//  FXMLDoc.Options := FXMLDoc.Options + [doNodeAutoIndent];
+//  FXMLDoc.DocumentElement:=FXMLDoc.CreateNode('core-config', ntElement);
+//  with FXMLDoc.DocumentElement.AddChild('plugin-dll').AddChild('plugin') do begin
+//    SetAttributeNS('id', '', value);
+//    SetAttributeNS('load', '', 'always');
+//    SetAttributeNS('disable', '', False);
+//    SetAttributeNS('dllname', '', '($APP_PATH)\Plugin\xxx.dll');
+//    with AddChild('extend-point').AddChild('extend') do begin
+//      SetAttributeNS('name', '', 'ILog');
+//      SetAttributeNS('ver', '', '1.0.0');
+//      SetAttributeNS('singleton', '', True);
+//      SetAttributeNS('disable', '', False);
+//      SetAttributeNS('id', '', value);
+//    end;
+//
+//    with AddChild('services').AddChild('service') do begin
+//      SetAttributeNS('name', '', 'IFind');
+//      SetAttributeNS('ver', '', '1.0.0');
+//      SetAttributeNS('singleton', '', True);
+//      SetAttributeNS('disable', '', False);
+//      SetAttributeNS('id', '', value);
+//      SetAttributeNS('implement', '', '');
+//    end;
+//  end;
+//
+//  FXMLDoc.SaveToFile(xmlFile);
+//end;
+
+{
+function TXmlConfig.ExistService(const sid: PAnsiChar): Boolean;
+var
+  i, j: Integer;
+  xmlNode, tempNode: IXMLNode;
+begin
+  Result := false;
+  xmlNode := GoToModuleHead; //<plugin-dll>
+  if (not Assigned(xmlNode)) or (not xmlNode.HasChildNodes) then
+    Exit;
+
+  for i:=0 to xmlNode.ChildNodes.Count-1 do
+    with xmlNode.ChildNodes.Get(i) do begin  //for each <module>
+      if NodeName<>'module' then
+        Continue;
+      tempNode := ChildNodes.FindNode('services');
+      if Assigned(tempNode) then  //<services>
+        for j:=0 to tempNode.ChildNodes.Count-1 do
+          with tempNode.ChildNodes.Get(j) do begin //<service>
+            if NodeName<>'service' then
+              Continue;
+            if HasAttribute('id') and GetAttributeNS('id', '') = sid then begin
+              Result := true;
+              Exit;
+            end;
+          end;
+    end;
+end;
+}
+
+
+{
+function TXmlConfig.ExistExtPoint(const sid: PAnsiChar): Boolean;
+var
+  i, j: Integer;
+  xmlNode, tempNode: IXMLNode;
+begin
+  Result := false;
+  xmlNode := GoToModuleHead; //<plugin-dll>
+  if (not Assigned(xmlNode)) or (not xmlNode.HasChildNodes) then
+    Exit;
+
+  for i:=0 to xmlNode.ChildNodes.Count-1 do
+    with xmlNode.ChildNodes.Get(i) do begin  //for each <module>
+      if NodeName<>'plugin' then
+        Continue;
+      tempNode := ChildNodes.FindNode('extend-point');
+      if Assigned(tempNode) then  //<services>
+        for j:=0 to tempNode.ChildNodes.Count-1 do
+          with tempNode.ChildNodes.Get(j) do begin //<service>
+            if NodeName<>'extend' then
+              Continue;
+            if HasAttribute('id') and GetAttributeNS('id', '') = sid then begin
+              Result := true;
+              Exit;
+            end;
+          end;
+    end;
+end;
+}
+
+end.

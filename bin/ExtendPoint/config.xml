@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<core-config>
+	<plugin-dll>
+		<plugin id="{BE855F6C-CE5D-42FF-85C2-CCC31AC7A47E}" name="ToolBarExtPoint" disable="False" dllname="ToolBarExtPoint.dll" load="always" loader="default">
+			<extend-point>
+				<extend name="IToolBarExt" ver="" singleton="False" disable="False" id="{4E33E8F9-6B66-4836-B55C-C76273227718}"/>
+			</extend-point>
+			<services/>
+		</plugin>
+		<plugin id="{A27A7515-4AA0-4BD9-B18F-FCB43831C277}" name="extPointImp" disable="False" dllname="extPointImp.dll" load="always" loader="default"><extend-point/><services><service name="IExtToolButton" ver="" singleton="True" disable="False" id="{5CF3E742-3969-4E9D-ABB3-97F51EF6F628}" implement="{4E33E8F9-6B66-4836-B55C-C76273227718}"/></services></plugin></plugin-dll>
+</core-config>

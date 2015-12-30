@@ -1,0 +1,51 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{65962A27-C4D7-4DB1-8B78-ED3E6A6D0F28}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Host\ToolbarExtPoint.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ExtendPoint\ToolBarExtPoint.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ExtendPointImp\extPointImp.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="ToolbarExtPoint">
+        <MSBuild Projects="ExtendPoint\ToolBarExtPoint.dproj"/>
+    </Target>
+    <Target Name="ToolbarExtPoint:Clean">
+        <MSBuild Projects="ExtendPoint\ToolBarExtPoint.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ToolbarExtPoint:Make">
+        <MSBuild Projects="ExtendPoint\ToolBarExtPoint.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="extPointImp">
+        <MSBuild Projects="ExtendPointImp\extPointImp.dproj"/>
+    </Target>
+    <Target Name="extPointImp:Clean">
+        <MSBuild Projects="ExtendPointImp\extPointImp.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="extPointImp:Make">
+        <MSBuild Projects="ExtendPointImp\extPointImp.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="ToolbarExtPoint;ToolBarExtPoint;extPointImp"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="ToolbarExtPoint:Clean;ToolBarExtPoint:Clean;extPointImp:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="ToolbarExtPoint:Make;ToolBarExtPoint:Make;extPointImp:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

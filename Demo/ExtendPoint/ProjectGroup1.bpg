@@ -1,0 +1,26 @@
+#------------------------------------------------------------------------------
+VERSION = BWS.01
+#------------------------------------------------------------------------------
+!ifndef ROOT
+ROOT = $(MAKEDIR)\..
+!endif
+#------------------------------------------------------------------------------
+MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
+DCC = $(ROOT)\bin\dcc32.exe $**
+BRCC = $(ROOT)\bin\brcc32.exe $**
+#------------------------------------------------------------------------------
+PROJECTS = ToolbarExtPoint.exe ToolBarExtPoint.dll extPointImp.dll
+#------------------------------------------------------------------------------
+default: $(PROJECTS)
+#------------------------------------------------------------------------------
+
+ToolbarExtPoint.exe: Host\ToolbarExtPoint.dpr
+  $(DCC)
+
+ToolBarExtPoint.dll: ExtendPoint\ToolBarExtPoint.dpr
+  $(DCC)
+
+extPointImp.dll: ExtendPointImp\extPointImp.dpr
+  $(DCC)
+
+

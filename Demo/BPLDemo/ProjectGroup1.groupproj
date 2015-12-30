@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{7488085E-3E07-4B14-9311-5E36BA626E13}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Host\Host.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BPL\bplDemo.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Host">
+        <MSBuild Projects="Host\Host.dproj"/>
+    </Target>
+    <Target Name="Host:Clean">
+        <MSBuild Projects="Host\Host.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Host:Make">
+        <MSBuild Projects="Host\Host.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="bplDemo">
+        <MSBuild Projects="BPL\bplDemo.dproj"/>
+    </Target>
+    <Target Name="bplDemo:Clean">
+        <MSBuild Projects="BPL\bplDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="bplDemo:Make">
+        <MSBuild Projects="BPL\bplDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Host;bplDemo"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Host:Clean;bplDemo:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Host:Make;bplDemo:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

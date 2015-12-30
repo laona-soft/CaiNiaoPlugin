@@ -1,0 +1,43 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: CppPlugin - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\Users\jie\AppData\Local\Temp\RSPDC0D.tmp" with contents
+[
+/nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /FR"Release/" /Fp"Release/CppPlugin.pch" /YX /Fo"Release/" /Fd"Release/" /FD /c 
+"E:\Work\Program\2014\WisdomPluginFramework\Demo\CPlus\CppPlugin\CppPlugin.cpp"
+"E:\Work\Program\2014\WisdomPluginFramework\Demo\CPlus\CppPlugin\SortIntf.cpp"
+"E:\Work\Program\2014\WisdomPluginFramework\Demo\CPlus\CppPlugin\StdAfx.cpp"
+]
+Creating command line "xicl6.exe @C:\Users\jie\AppData\Local\Temp\RSPDC0D.tmp" 
+Creating temporary file "C:\Users\jie\AppData\Local\Temp\RSPDC0E.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /incremental:no /pdb:"Release/CppPlugin.pdb" /machine:I386 /def:".\Exp.def" /out:"../../../bin/CPlus/CppPlugin.dll" /implib:"Release/CppPlugin.lib" 
+.\Release\CppPlugin.obj
+.\Release\SortIntf.obj
+.\Release\StdAfx.obj
+]
+Creating command line "xilink6.exe @C:\Users\jie\AppData\Local\Temp\RSPDC0E.tmp"
+<h3>Output Window</h3>
+Compiling...
+CppPlugin.cpp
+SortIntf.cpp
+StdAfx.cpp
+Linking...
+xilink6: executing 'D:\ProgramTools\VC6\VC98\Bin\link.exe'
+   Creating library Release/CppPlugin.lib and object Release/CppPlugin.exp
+Creating command line "bscmake.exe /nologo /o"Release/CppPlugin.bsc"  .\Release\CppPlugin.sbr .\Release\SortIntf.sbr .\Release\StdAfx.sbr"
+Creating browse info file...
+<h3>Output Window</h3>
+
+
+
+<h3>Results</h3>
+CppPlugin.dll - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<core-config>
+	<plugin-dll><plugin id="{1B617B6F-E718-4dbf-8893-C3AB61ECD5B0}" name="CppPlugin" load="when_use" disable="False" dllname="CppPlugin.dll" loader="default"><extend-point/><services><service name="ISortService" ver="Ver1.02 buid201407170126" singleton="False" disable="False" id="{4208E4A4-F017-495a-81AA-D650DA613F02}" implement=""/></services></plugin></plugin-dll>
+</core-config>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<core-config>
+	<plugin-dll><plugin id="{86321E0F-9A55-426C-843F-A55036086617}" name="SplashDemo" disable="False" dllname="SplashDemo.dll" load="always" loader="default"><extend-point/><services/></plugin></plugin-dll>
+</core-config>

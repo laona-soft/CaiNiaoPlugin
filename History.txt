@@ -1,0 +1,55 @@
+                           框架用途
+      WisdomPluginFramework是融合OSGI微内核理念 + Eclipse的
+  扩展点概念而精心设计的轻量级插件框架，由Delphi实现，但可以
+  使用于Delphi、BCB、VC++中，提供非常强大灵活的插件调度能力，
+  让你充分享受插件式编程的乐趣。
+  
+ 【 更新记录 】
+   --------------------------------------------------------
+  2014.8.28 ver1.6.2
+    Update by IceAir
+  1、调整ServiceIsActive和ExistService的判断逻辑，并修复调整后带来的一个小Bug。   
+  2、Demo目录增加一个Demo：RTCHttpSrvDemo，由热心网友bq提供，感谢他。
+    该Demo把RTC的HTTP服务端组件封装成插件DLL，
+    演示了使用EasyUI进行web开发的示例，
+    同时也演示了使用插件的C/S开发方式。
+  --------------------------------------------------------
+  2014.8.11 2:46
+   Update by IceAir
+  Doc目录下增加《WisdomPluginFramework插件框架设计说明及使用手册》pdf和Word    
+  --------------------------------------------------------
+ 2014.8.8 ver 1.6.1
+   Update by IceAir
+ 1、在IServiceManager接口中增加两个函数：
+   function GetExtServiceInfo(const serviceID: MyString; idx: Integer): IServiceInfo;
+   function GetServiceInfo(idx: Integer): IServiceInfo; overload;
+   用于获取不知道插件ID的插件信息
+ 2、调整实现扩展点的插件服务，在调用IServiceManager.GetExtServiceCount即触发载入
+ --------------------------------------------------------
+ 2014.8.1 ver 1.6
+   Update by IceAir
+   此版本支持D7 ~ XE6，各版本编译的Exe和Dll可完全混用皆能工作正常，主要更新以下：
+ 1、增加使用的字符串编译选项，分为_FORCE_ANSI/_FORCE_UNICODE/_USE_WSTRING三类，
+    默认使用_USE_WSTRING，这样D7~XE6UP编译的DLL插件均完美支持，如果确定只使用
+    Unicode的DLL，则在用D2009及以上时可使用_FORCE_UNICODE，D7可用_FORCE_ANSI。
+ 2、C++的头文件也增加编译条件以根据情况决定使用char*还是wchar_t*。
+ 3、增加对bpl插件的支持
+ 4、增加针对不同Delphi版本的条件编译，可以支持D7~XE6UP更顺利跨平台编译
+ 5、增加Splash Demo，演示起动闪屏界面及插件加载过程
+ 6、增加BPL Demo，演示BPL + DLL的混合工作模式
+ 7、增加MemoryLoader Demo，这是一个内存加载DLL插件的演示，重磅，一定要看
+ 8、增加项目文件，插件框架可以编译为Dll，用于BCB和VC使用
+ 9、增加VC++使用框架进行插件编程示例
+ --------------------------------------------------------
+ 2014.07.20 ver 1.5
+   Update by IceAir
+   终于在Delphi盒子上光荣发布
+ 1. 精心再雕琢了核心设计，再细检查并完善核心代码逻辑
+ 2、完成插件管理工具PluginConfig，可以对插件管理生成xml配置
+ 3、增加对VC++的插件支持单元
+ 4、增加两个Demo：ExtendPoint和CPlus
+ --------------------------------------------------------
+ 2012.07.xx ver 0.5
+   Update by IceAir
+ 1. 完成最初稿，然后工作生活繁忙暂时不得已放在一边。
+}

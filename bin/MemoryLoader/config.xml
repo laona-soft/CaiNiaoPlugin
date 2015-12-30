@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<core-config>
+	<plugin-dll><plugin id="{B287096A-6B56-4B6B-AAE6-F78AD005F1DC}" name="MemoryLoader" disable="False" dllname="MemoryLoader.dll" load="when_use" loader="default"><extend-point/><services><service name="IMemoryLoader" ver="1.0.0" singleton="False" disable="False" id="{B069A976-D69E-4935-813A-EB25528A1D25}" implement=""/></services></plugin></plugin-dll>
+</core-config>

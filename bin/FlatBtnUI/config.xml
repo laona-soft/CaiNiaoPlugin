@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<core-config>
+	<plugin-dll>
+		<abc></abc>
+		<plugin id="{C65302CD-B0B0-4C7D-BB2E-DC8EBA74416F}" name="a Simple Plugin" load="when_use" disable="False" dllname="UiPlugin.dll" loader="default"><extend-point/><services><service name="TMyExtendPoint" ver="" singleton="True" disable="False" id="{B70E3F78-5960-4699-B613-DD727F189638}" implement="{75D54660-B981-4BC0-B6ED-F7BF02F3A14B}"/></services></plugin></plugin-dll>
+</core-config>

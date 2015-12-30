@@ -1,0 +1,29 @@
+#------------------------------------------------------------------------------
+VERSION = BWS.01
+#------------------------------------------------------------------------------
+!ifndef ROOT
+ROOT = $(MAKEDIR)\..
+!endif
+#------------------------------------------------------------------------------
+MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
+DCC = $(ROOT)\bin\dcc32.exe $**
+BRCC = $(ROOT)\bin\brcc32.exe $**
+#------------------------------------------------------------------------------
+PROJECTS = PgHttpSrv.dll Host.exe PgClientTest.dll HttpWebTest.dll
+#------------------------------------------------------------------------------
+default: $(PROJECTS)
+#------------------------------------------------------------------------------
+
+PgHttpSrv.dll: PluginHttp\PgHttpSrv.dpr
+  $(DCC)
+
+Host.exe: Host\Host.dpr
+  $(DCC)
+
+PgClientTest.dll: PluginHttpClientTest\PgClientTest.dpr
+  $(DCC)
+
+HttpWebTest.dll: PluginHttpWebTest\HttpWebTest.dpr
+  $(DCC)
+
+

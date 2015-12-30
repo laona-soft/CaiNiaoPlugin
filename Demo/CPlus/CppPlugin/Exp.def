@@ -1,0 +1,9 @@
+LIBRARY CppPlugin
+
+EXPORTS
+    GetCppObject       @1
+    GetPluginInfo      @2
+	InitializePlugin   @3
+    ServiceStart       @4
+    ServiceStop        @5
+	UninitializePlugin @6

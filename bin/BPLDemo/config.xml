@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<core-config>
+	<plugin-dll><plugin id="WisdomPluginFramework.Demo.bplDemo" name="Demo.bplDemo" disable="False" dllname="bplDemo.bpl" load="when_use" loader="default"><extend-point/><services><service name="IBPLTest" ver="" singleton="True" disable="False" id="{E5C20236-24A0-41D3-B65A-D8258CD6BCFA}" implement=""/></services></plugin><plugin id="{1B617B6F-E718-4dbf-8893-C3AB61ECD5B0}" name="CppPlugin" load="when_use" dllname="..\CPlus\CppPlugin.dll" disable="False" loader="default"><extend-point/><services><service name="ISortService" ver="Ver1.02 buid201407170126" singleton="False" disable="False" id="{4208E4A4-F017-495a-81AA-D650DA613F02}" implement=""/></services></plugin></plugin-dll>
+</core-config>
