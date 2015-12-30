@@ -2,7 +2,7 @@ unit IntfCommon;
 
 interface
 
-uses Winapi.Windows;
+uses Windows;
 
 type
   IBPLTest = interface(IInterface)

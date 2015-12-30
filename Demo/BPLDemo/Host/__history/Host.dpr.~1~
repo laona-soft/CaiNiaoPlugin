@@ -1,7 +1,10 @@
 program Host;
 
 uses
-  CaiNiaoPlugin,
+  {$IFDEF VER150}
+  FastMM4,
+  {$ENDIF}
+  WisdomFramework,
   Forms,
   Main in 'Main.pas' {Form1},
   IntfCommon in '..\BPL\IntfCommon.pas';

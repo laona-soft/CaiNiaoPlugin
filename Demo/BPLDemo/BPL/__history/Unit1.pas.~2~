@@ -19,7 +19,7 @@ type
 
   ILog = interface(IInterface)
   [IID_ILOG]
-    procedure Log(msg: PChar); stdcall;
+    procedure Log(msg: PMyChar); stdcall;
   end;
 
   TForm1 = class(TForm, ILog)
@@ -35,7 +35,7 @@ type
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
-    procedure Log(msg: PChar); stdcall;
+    procedure Log(msg: PMyChar); stdcall;
   public
     { Public declarations }
   end;
@@ -107,7 +107,7 @@ begin
   iSort.Sort(@v[0], Length(v));
 end;
 
-procedure TForm1.Log(msg: PChar);
+procedure TForm1.Log(msg: PMyChar);
 begin
   mmo1.Lines.Append(msg);
 end;

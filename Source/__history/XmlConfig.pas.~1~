@@ -8,59 +8,67 @@
 
 unit XmlConfig;
 
-interface
+{$INCLUDE Def.inc}
 
-uses
+interface
+  uses
+  {$IFDEF IDE_XE4up}
   Winapi.Windows, System.SysUtils, Xml.xmldom, Xml.XmlIntf, Xml.XMLDoc,
-  Winapi.ActiveX, WisdomCoreInterfaceForD;
+  {$ELSE}
+  Windows, SysUtils, xmldom, XMLIntf, msxmldom, XMLDoc, 
+  {$ENDIF}
+  {$IFDEF MSWINDOWS}
+  ActiveX,
+  {$ENDIF}
+  WisdomCoreInterfaceForD;
 
 type
   TXmlConfig = class(TPluginInterfacedObject, IConfig)
   protected
     FXMLDoc: IXMLDocument;
-    procedure CreateXMLFile(const xmlFile: string);
-    function GoToExtPoint(const sid: string): IXMLNode;
-    function GoToPlugin(const pid: string): IXMLNode;
+    procedure CreateXMLFile(const xmlFile: MyString);
+    function GoToExtPoint(const sid: MyString): IXMLNode;
+    function GoToPlugin(const pid: MyString): IXMLNode;
     function GoToPluginHead: IXMLNode;
-    function GoToService(const sid: string): IXMLNode;
+    function GoToService(const sid: MyString): IXMLNode;
   public
     constructor Create; override;
     destructor Destroy; override;
     procedure AddExtendPoint(const sv: IServiceInfo); virtual;
-    procedure AddPlugin(const dllFile: string); virtual;
+    procedure AddPlugin(const dllFile: MyString); virtual;
     procedure AddService(const sv: IServiceInfo); virtual;
-    procedure DisableExtendPoint(const sid: string); virtual;
-    procedure DisablePlugin(const pid: string); virtual;
-    procedure DisableService(const serviceID: string); virtual;
-    procedure EnabledExtendPoint(const sid: string); virtual;
-    procedure EnabledPlugin(const pid: string); virtual;
-    procedure EnabledService(const serviceID: string); virtual;
-    function ExistExtPoint(const sid: string): Boolean; virtual;
-    function ExistPlugin(const pid: string): Boolean; virtual;
-    function ExistService(const sid: string): Boolean; virtual;
-    function ExtPointIsDisable(const sid: string): Boolean; virtual;
-    function GetExtImpServiceCount(const extSid: string): Integer; virtual;
-    function GetExtImpServiceID(const extSid: string; idx: Integer): string; virtual;
+    procedure DisableExtendPoint(const sid: MyString); virtual;
+    procedure DisablePlugin(const pid: MyString); virtual;
+    procedure DisableService(const serviceID: MyString); virtual;
+    procedure EnabledExtendPoint(const sid: MyString); virtual;
+    procedure EnabledPlugin(const pid: MyString); virtual;
+    procedure EnabledService(const serviceID: MyString); virtual;
+    function ExistExtPoint(const sid: MyString): Boolean; virtual;
+    function ExistPlugin(const pid: MyString): Boolean; virtual;
+    function ExistService(const sid: MyString): Boolean; virtual;
+    function ExtPointIsDisable(const sid: MyString): Boolean; virtual;
+    function GetExtImpServiceCount(const extSid: MyString): Integer; virtual;
+    function GetExtImpServiceID(const extSid: MyString; idx: Integer): MyString; virtual;
     function GetPluginCount: Integer; virtual;
-    function GetPluginLoaderID(const pid: string): string; virtual;
-    function GetPluginLoadState(const pid: string): string; virtual;
-    procedure Open(const xmlFile: string); virtual;
-    function PluginDLL(const pid: string): string; virtual;
-    function PluginIDFromExtSid(const extSID: string): string; virtual;
-    function PluginIDFromIdx(idx: Integer): string; virtual;
-    function PluginIDFromSid(const sid: string): string; virtual;
-    function PluginIsDisable(const pid: string): Boolean; virtual;
+    function GetPluginLoaderID(const pid: MyString): MyString; virtual;
+    function GetPluginLoadState(const pid: MyString): MyString; virtual;
+    procedure Open(const xmlFile: MyString); virtual;
+    function PluginDLL(const pid: MyString): MyString; virtual;
+    function PluginIDFromExtSid(const extSID: MyString): MyString; virtual;
+    function PluginIDFromIdx(idx: Integer): MyString; virtual;
+    function PluginIDFromSid(const sid: MyString): MyString; virtual;
+    function PluginIsDisable(const pid: MyString): Boolean; virtual;
     procedure Reload; virtual;
-    procedure RemoveExtendPoint(const sid: string); virtual;
-    procedure RemovePlugin(const pid: string); virtual;
-    procedure RemoveService(const serviceID: string); virtual;
+    procedure RemoveExtendPoint(const sid: MyString); virtual;
+    procedure RemovePlugin(const pid: MyString); virtual;
+    procedure RemoveService(const serviceID: MyString); virtual;
     procedure Save; virtual;
-    function ServiceIsDisable(const sid: string): Boolean; virtual;
-    function ServiceIsSingleton(const sid: string): Boolean; virtual;
-    procedure SetExtendPointSingleton(const sid: string; setSingleton: Boolean); virtual;
-    procedure SetPluginLoaderID(const pid, lid: string); virtual;
-    procedure SetPluginLoadState(const pid, state: string); virtual;
-    procedure SetServiceSingleton(const serviceID: string; setSingleton:
+    function ServiceIsDisable(const sid: MyString): Boolean; virtual;
+    function ServiceIsSingleton(const sid: MyString): Boolean; virtual;
+    procedure SetExtendPointSingleton(const sid: MyString; setSingleton: Boolean); virtual;
+    procedure SetPluginLoaderID(const pid, lid: MyString); virtual;
+    procedure SetPluginLoadState(const pid, state: MyString); virtual;
+    procedure SetServiceSingleton(const serviceID: MyString; setSingleton:
         Boolean); virtual;
   end;
 
@@ -85,7 +93,7 @@ end;
 procedure TXmlConfig.AddExtendPoint(const sv: IServiceInfo);
 var
   xmlNode: IXMLNode;
-  pid: string;
+  pid: MyString;
 begin
   if not Assigned(sv) then
     Exit;
@@ -107,7 +115,7 @@ begin
   end;
 end;
 
-procedure TXmlConfig.AddPlugin(const dllFile: string);
+procedure TXmlConfig.AddPlugin(const dllFile: MyString);
 var
   i: Integer;
   xmlNode, extPointNode, serviceNode: IXMLNode;
@@ -165,7 +173,7 @@ end;
 procedure TXmlConfig.AddService(const sv: IServiceInfo);
 var
   xmlNode: IXMLNode;
-  pid: string;
+  pid: MyString;
 begin
   if not Assigned(sv) then
     Exit;
@@ -188,7 +196,7 @@ begin
   end;
 end;
 
-procedure TXmlConfig.CreateXMLFile(const xmlFile: string);
+procedure TXmlConfig.CreateXMLFile(const xmlFile: MyString);
 begin
   //构建一个标准config.xml文件
   FXMLDoc := NewXMLDocument;
@@ -200,13 +208,13 @@ begin
   FXMLDoc := nil;
 end;
 
-procedure TXmlConfig.DisableExtendPoint(const sid: string);
+procedure TXmlConfig.DisableExtendPoint(const sid: MyString);
 begin
   if ExistExtPoint(sid) then
     GoToExtPoint(sid).SetAttributeNS('disable', '', True);
 end;
 
-procedure TXmlConfig.DisablePlugin(const pid: string);
+procedure TXmlConfig.DisablePlugin(const pid: MyString);
 var
   xmlNode: IXMLNode;
 begin
@@ -215,19 +223,19 @@ begin
     xmlNode.SetAttributeNS('disable', '', True);
 end;
 
-procedure TXmlConfig.DisableService(const serviceID: string);
+procedure TXmlConfig.DisableService(const serviceID: MyString);
 begin
   if ExistService(serviceID) then
     GoToService(serviceID).SetAttributeNS('disable', '', True);
 end;
 
-procedure TXmlConfig.EnabledExtendPoint(const sid: string);
+procedure TXmlConfig.EnabledExtendPoint(const sid: MyString);
 begin
   if ExistExtPoint(sid) then
     GoToExtPoint(sid).SetAttributeNS('disable', '', False);
 end;
 
-procedure TXmlConfig.EnabledPlugin(const pid: string);
+procedure TXmlConfig.EnabledPlugin(const pid: MyString);
 var
   xmlNode: IXMLNode;
 begin
@@ -236,28 +244,28 @@ begin
     xmlNode.SetAttributeNS('disable', '', False);
 end;
 
-procedure TXmlConfig.EnabledService(const serviceID: string);
+procedure TXmlConfig.EnabledService(const serviceID: MyString);
 begin
   if ExistService(serviceID) then
     GoToService(serviceID).SetAttributeNS('disable', '', False);
 end;
 
-function TXmlConfig.ExistExtPoint(const sid: string): Boolean;
+function TXmlConfig.ExistExtPoint(const sid: MyString): Boolean;
 begin
   Result := PluginIDFromExtSid(sid) <> '';
 end;
 
-function TXmlConfig.ExistPlugin(const pid: string): Boolean;
+function TXmlConfig.ExistPlugin(const pid: MyString): Boolean;
 begin
   Result := GoToPlugin(pid)<>nil;
 end;
 
-function TXmlConfig.ExistService(const sid: string): Boolean;
+function TXmlConfig.ExistService(const sid: MyString): Boolean;
 begin
   Result := GoToService(sid) <> nil;
 end;
 
-function TXmlConfig.ExtPointIsDisable(const sid: string): Boolean;
+function TXmlConfig.ExtPointIsDisable(const sid: MyString): Boolean;
 var
   xmlNode: IXMLNode;
 begin
@@ -269,7 +277,7 @@ begin
     Result := xmlNode.GetAttributeNS('disable', '');
 end;
 
-function TXmlConfig.GetExtImpServiceCount(const extSid: string): Integer;
+function TXmlConfig.GetExtImpServiceCount(const extSid: MyString): Integer;
 var
   i, j: Integer;
   xmlNode, tempNode: IXMLNode;
@@ -298,8 +306,8 @@ begin
     end;
 end;
 
-function TXmlConfig.GetExtImpServiceID(const extSid: string; idx: Integer):
-    string;
+function TXmlConfig.GetExtImpServiceID(const extSid: MyString; idx: Integer):
+    MyString;
 var
   i, j, pos: Integer;
   xmlNode, tempNode: IXMLNode;
@@ -349,7 +357,7 @@ begin
   //Result := xmlNode.ChildNodes.Count;
 end;
 
-function TXmlConfig.GetPluginLoaderID(const pid: string): string;
+function TXmlConfig.GetPluginLoaderID(const pid: MyString): MyString;
 var
   xmlNode: IXMLNode;
 begin
@@ -365,7 +373,7 @@ begin
     Result := PLUGIN_LOADER;
 end;
 
-function TXmlConfig.GetPluginLoadState(const pid: string): string;
+function TXmlConfig.GetPluginLoadState(const pid: MyString): MyString;
 var
   xmlNode: IXMLNode;
 begin
@@ -378,7 +386,7 @@ begin
     Result := LowerCase(xmlNode.GetAttributeNS('load', ''));
 end;
 
-function TXmlConfig.GoToExtPoint(const sid: string): IXMLNode;
+function TXmlConfig.GoToExtPoint(const sid: MyString): IXMLNode;
 var
   i, j: Integer;
   xmlNode, tempNode: IXMLNode;
@@ -406,7 +414,7 @@ begin
     end;
 end;
 
-function TXmlConfig.GoToPlugin(const pid: string): IXMLNode;
+function TXmlConfig.GoToPlugin(const pid: MyString): IXMLNode;
 var
   i: Integer;
   xmlNode: IXMLNode;
@@ -441,7 +449,7 @@ begin
   Result := xmlNode.ChildNodes.FindNode('plugin-dll');
 end;
 
-function TXmlConfig.GoToService(const sid: string): IXMLNode;
+function TXmlConfig.GoToService(const sid: MyString): IXMLNode;
 var
   i, j: Integer;
   xmlNode, tempNode: IXMLNode;
@@ -469,9 +477,9 @@ begin
     end;
 end;
 
-procedure TXmlConfig.Open(const xmlFile: string);
+procedure TXmlConfig.Open(const xmlFile: MyString);
 var
-  tem: string;
+  tem: MyString;
 begin
   FXMLDoc := nil;
   if FileExists(xmlFile) then
@@ -490,7 +498,7 @@ end;
 function PathIsRelativeA(const lpszFile: PAnsiChar): Boolean; stdcall; external 'shlwapi.dll';
 function PathCombineA(lpszDest: PAnsiChar; const lpszDir, lpszFile:PAnsiChar): PAnsiChar; stdcall; external 'shlwapi.dll';
 //相对路径转绝对路径
-function GetAbsolutePathEx(basePath, relativePath: string): string;
+function GetAbsolutePathEx(basePath, relativePath: MyString): MyString;
 var
    dest: AnsiString;
    b1,r1: AnsiString;
@@ -506,7 +514,7 @@ begin
     Result := relativePath;
 end;
 
-function TXmlConfig.PluginDLL(const pid: string): string;
+function TXmlConfig.PluginDLL(const pid: MyString): MyString;
 var
   xmlNode: IXMLNode;
 begin
@@ -518,7 +526,7 @@ begin
 end;
 
 //20140731：暂时注释，以下函数使用绝对路径，可用($APP_PATH)宏
-//function TXmlConfig.PluginDLL(const pid: string): string;
+//function TXmlConfig.PluginDLL(const pid: MyString): MyString;
 //var
 //  xmlNode: IXMLNode;
 //begin
@@ -532,7 +540,7 @@ end;
 //    Result := '';
 //end;
 
-function TXmlConfig.PluginIDFromExtSid(const extSID: string): string;
+function TXmlConfig.PluginIDFromExtSid(const extSID: MyString): MyString;
 var
   i, j: Integer;
   xmlNode, tempNode: IXMLNode;
@@ -561,7 +569,7 @@ begin
     end;
 end;
 
-function TXmlConfig.PluginIDFromIdx(idx: Integer): string;
+function TXmlConfig.PluginIDFromIdx(idx: Integer): MyString;
 var
   i, idxPos: Integer;
   xmlNode: IXMLNode;
@@ -587,7 +595,7 @@ begin
     end;
 end;
 
-function TXmlConfig.PluginIDFromSid(const sid: string): string;
+function TXmlConfig.PluginIDFromSid(const sid: MyString): MyString;
 var
   i, j: Integer;
   xmlNode, tempNode: IXMLNode;
@@ -616,7 +624,7 @@ begin
     end;
 end;
 
-function TXmlConfig.PluginIsDisable(const pid: string): Boolean;
+function TXmlConfig.PluginIsDisable(const pid: MyString): Boolean;
 var
   xmlNode: IXMLNode;
 begin
@@ -637,7 +645,7 @@ begin
       CfgReLoadPlugins;
 end;
 
-procedure TXmlConfig.RemoveExtendPoint(const sid: string);
+procedure TXmlConfig.RemoveExtendPoint(const sid: MyString);
 var
   xmlNode: IXMLNode;
 begin
@@ -650,7 +658,7 @@ begin
   xmlNode.ParentNode.ChildNodes.Remove(xmlNode);
 end;
 
-procedure TXmlConfig.RemovePlugin(const pid: string);
+procedure TXmlConfig.RemovePlugin(const pid: MyString);
 var
   xmlNode: IXMLNode;
 begin
@@ -661,7 +669,7 @@ begin
   xmlNode.ParentNode.ChildNodes.Remove(xmlNode);
 end;
 
-procedure TXmlConfig.RemoveService(const serviceID: string);
+procedure TXmlConfig.RemoveService(const serviceID: MyString);
 var
   xmlNode: IXMLNode;
 begin
@@ -683,7 +691,7 @@ begin
   end;
 end;
 
-function TXmlConfig.ServiceIsDisable(const sid: string): Boolean;
+function TXmlConfig.ServiceIsDisable(const sid: MyString): Boolean;
 var
   xmlNode: IXMLNode;
 begin
@@ -695,7 +703,7 @@ begin
     Result := xmlNode.GetAttributeNS('disable', '');
 end;
 
-function TXmlConfig.ServiceIsSingleton(const sid: string): Boolean;
+function TXmlConfig.ServiceIsSingleton(const sid: MyString): Boolean;
 var
   xmlNode: IXMLNode;
 begin
@@ -707,14 +715,14 @@ begin
     Result := xmlNode.GetAttributeNS('singleton', '');
 end;
 
-procedure TXmlConfig.SetExtendPointSingleton(const sid: string; setSingleton:
+procedure TXmlConfig.SetExtendPointSingleton(const sid: MyString; setSingleton:
     Boolean);
 begin
   if ExistExtPoint(sid) then
     GoToExtPoint(sid).SetAttributeNS('singleton', '', setSingleton);
 end;
 
-procedure TXmlConfig.SetPluginLoaderID(const pid, lid: string);
+procedure TXmlConfig.SetPluginLoaderID(const pid, lid: MyString);
 var
   xmlNode: IXMLNode;
 begin
@@ -723,7 +731,7 @@ begin
     xmlNode.SetAttributeNS('loader', '', lid);
 end;
 
-procedure TXmlConfig.SetPluginLoadState(const pid, state: string);
+procedure TXmlConfig.SetPluginLoadState(const pid, state: MyString);
 var
   xmlNode: IXMLNode;
 begin
@@ -732,7 +740,7 @@ begin
     xmlNode.SetAttributeNS('load', '', state);
 end;
 
-procedure TXmlConfig.SetServiceSingleton(const serviceID: string; setSingleton:
+procedure TXmlConfig.SetServiceSingleton(const serviceID: MyString; setSingleton:
     Boolean);
 begin
   if ExistService(serviceID) then
@@ -740,7 +748,7 @@ begin
 end;
 
 {
-procedure TXmlConfig.RemovePlugin(const pid: string);
+procedure TXmlConfig.RemovePlugin(const pid: MyString);
 var
   xmlNode, temNode: IXMLNode;
 begin
@@ -753,9 +761,9 @@ begin
 end;
 }
 
-//procedure TXmlConfig.CreateXMLFile(const xmlFile: string);
+//procedure TXmlConfig.CreateXMLFile(const xmlFile: MyString);
 //var
-//  value: string;
+//  value: MyString;
 //begin
 //  //构建一个标准config.xml文件
 //  value := '{00000000-0000-0000-0000-000000000000}';

@@ -107,7 +107,7 @@ begin
   iSort.Sort(@v[0], Length(v));
 end;
 
-procedure TForm1.Log(msg: PChar);
+procedure TForm1.Log(msg: PMyChar);
 begin
   mmo1.Lines.Append(msg);
 end;

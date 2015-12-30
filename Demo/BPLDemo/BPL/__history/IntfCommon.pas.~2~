@@ -2,7 +2,10 @@ unit IntfCommon;
 
 interface
 
-uses Winapi.Windows;
+uses Windows;
+
+const
+  IID_BPLTest = '{E5C20236-24A0-41D3-B65A-D8258CD6BCFA}';
 
 type
   IBPLTest = interface(IInterface)

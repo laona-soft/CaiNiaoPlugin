@@ -1,7 +1,7 @@
 program Host;
 
 uses
-  CaiNiaoPlugin,
+  WisdomFramework,
   Forms,
   Main in 'Main.pas' {Form1},
   IntfCommon in '..\BPL\IntfCommon.pas';
